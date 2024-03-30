@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <rss version="2.0">
     <channel>
-        <title>Funkynoob的个人博客 • Posts by &#34;docker&#34; category</title>
+        <title>riversea的个人博客 • Posts by &#34;docker&#34; category</title>
         <link>https://blog.riversea.top</link>
         <description>亿点点心得</description>
         <language>zh-CN</language>
@@ -9,9 +9,11 @@
         <lastBuildDate>Sun, 10 Mar 2024 13:07:52 +0800</lastBuildDate>
         <category>docker</category>
         <category>Git</category>
-        <category>Nginx</category>
+        <category>设计模式</category>
+        <category>maven</category>
         <category>ORM框架</category>
         <category>MyBatis</category>
+        <category>Nginx</category>
         <category>redis</category>
         <category>spring</category>
         <item>
@@ -28,7 +30,7 @@
 &lt;p&gt;镜像和容器的关系类似于类和对象的、程序和进程的关系。镜像在本地运行起来之后就是容器。镜像由开发人员所维护以及编写，镜像包括了代码运行的所有必要的环境。&lt;/p&gt;
 &lt;h3 id=&#34;如何获得镜像&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#如何获得镜像&#34;&gt;#&lt;/a&gt; 如何获得镜像&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;Docker&lt;/code&gt;  官方提供了一个镜像仓库 —— &lt;a href=&#34;https://hub.docker.com/&#34;&gt;Docker hub&lt;/a&gt;，类似于  &lt;code&gt;Github&lt;/code&gt;  这样的代码托管平台，该镜像仓库托管了所有官方或者第三方提供的镜像。&lt;/p&gt;
-&lt;img src=&#34;docker/docker_hub.png&#34; alt=&#34;docker hub&#34;/&gt;
+&lt;img src=&#34;http://static.riversea.top/docker/docker_hub.png&#34; alt=&#34;docker hub&#34;/&gt;
 &lt;p&gt;由于  &lt;code&gt;docker hub&lt;/code&gt;  是国外的，可以使用一些镜像仓库进行加速，例如阿里云、腾讯云。&lt;/p&gt;
 &lt;p&gt;通过以下命令拉取镜像：&lt;/p&gt;
 &lt;figure class=&#34;highlight shell&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs shell&#34;&gt;docker pull &amp;lt;image&amp;gt;:[tag] #如果不指定tag，tag将会是默认值：latest&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
@@ -55,15 +57,15 @@
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;环境变量&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#环境变量&#34;&gt;#&lt;/a&gt; 环境变量&lt;/h3&gt;
 &lt;p&gt;你可能想问，我怎么知道有哪些环境变量我可以使用。其实，每个镜像都配备了官方文档，你可以在上面寻找官方提供的环境变量，在&lt;a href=&#34;https://hub.docker.com/&#34;&gt; Docker hub&lt;/a&gt; 上面搜索  &lt;code&gt;mysql&lt;/code&gt;  找到最高  &lt;code&gt;star&lt;/code&gt;  的那个镜像：&lt;/p&gt;
-&lt;img src=&#34;docker/mysql.png&#34; alt=&#34;mysql镜像&#34;/&gt;
+&lt;img src=&#34;http://static.riversea.top/docker/mysql.png&#34; alt=&#34;mysql镜像&#34;/&gt;
 &lt;p&gt;点进去，持续往下翻，直到你看到：&lt;/p&gt;
-&lt;img src=&#34;docker/mysql_doc.png&#34; alt=&#34;mysql镜像&#34;/&gt;
+&lt;img src=&#34;http://static.riversea.top/docker/mysql_doc.png&#34; alt=&#34;mysql镜像&#34;/&gt;
 &lt;p&gt;现在你就知道了官方给我们提供了哪些环境变量。如图， &lt;code&gt;MYSQL_ROOT_PASSWORD&lt;/code&gt;  代表着数据库的密码&lt;/p&gt;
 &lt;h2 id=&#34;如何查看运行的容器&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#如何查看运行的容器&#34;&gt;#&lt;/a&gt; 如何查看运行的容器&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;docker&lt;/code&gt;  提供了一个子命令，用于查看运行的容器：&lt;/p&gt;
 &lt;figure class=&#34;highlight shell&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs shell&#34;&gt;docker ps &amp;lt;container&amp;gt; &lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;大概样式如下：&lt;/p&gt;
-&lt;img src=&#34;docker/docker_ps.png&#34; alt=&#34;运行中的容器&#34;/&gt;
+&lt;img src=&#34;http://static.riversea.top/docker/docker_ps.png&#34; alt=&#34;运行中的容器&#34;/&gt;
 &lt;h2 id=&#34;启动-停止-删除&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#启动-停止-删除&#34;&gt;#&lt;/a&gt; 启动、停止、删除&lt;/h2&gt;
 &lt;p&gt;如果你想暂停一个容器，那么只需要使用如下命令，即可暂停容器：&lt;/p&gt;
 &lt;figure class=&#34;highlight shell&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs shell&#34;&gt;docker stop &amp;lt;container-name&amp;gt;&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
@@ -127,7 +129,7 @@
 &lt;h1 id=&#34;网络network&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#网络network&#34;&gt;#&lt;/a&gt; 网络 (network)&lt;/h1&gt;
 &lt;p&gt;现在让我考考你一个问题。如果现在有两个容器，一个是数据库，一个是服务器，服务器想要访问数据库怎么办呢。前面说到，容器是一个个隔离的环境，如何才能让容器之间通信呢？&lt;/p&gt;
 &lt;p&gt;容器作为操作系统，当然有自己的&lt;strong&gt;网络&lt;/strong&gt;。 &lt;code&gt;docker&lt;/code&gt;  在运行的时候会初始化一张虚拟网卡，现在前往你的宿主机尝试一下  &lt;code&gt;ip addr&lt;/code&gt;  命令，如果你的  &lt;code&gt;docker&lt;/code&gt;  在运行中，不出意外你将会看到：&lt;/p&gt;
-&lt;img src=&#34;docker/net_adapter.png&#34; alt=&#34;docker的虚拟网卡&#34;/&gt;
+&lt;img src=&#34;http://static.riversea.top/docker/net_adapter.png&#34; alt=&#34;docker的虚拟网卡&#34;/&gt;
 &lt;p&gt;这就是  &lt;code&gt;docker&lt;/code&gt;  生成的虚拟网卡。意味着容器本身之间也能进行&lt;strong&gt;通信&lt;/strong&gt;。&lt;/p&gt;
 &lt;h2 id=&#34;使用默认的网络&#34;&gt;&lt;a class=&#34;markdownIt-Anchor&#34; href=&#34;#使用默认的网络&#34;&gt;#&lt;/a&gt; 使用默认的网络&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;docker&lt;/code&gt;  会初始化一个  &lt;code&gt;docker0&lt;/code&gt;  的网卡，分配一个名为  &lt;code&gt;bridge&lt;/code&gt;  的默认网段。所有启动的容器将会默认使用这个网段，并分配一个  &lt;code&gt;ip&lt;/code&gt;  地址，但 &lt;code&gt;docker&lt;/code&gt;  官方并不推荐使用默认的网络，而是推荐 —— 自定义网络&lt;/p&gt;

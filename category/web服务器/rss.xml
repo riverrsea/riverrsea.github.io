@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <rss version="2.0">
     <channel>
-        <title>Funkynoob的个人博客 • Posts by &#34;web服务器&#34; category</title>
+        <title>riversea的个人博客 • Posts by &#34;web服务器&#34; category</title>
         <link>https://blog.riversea.top</link>
         <description>亿点点心得</description>
         <language>zh-CN</language>
@@ -9,9 +9,11 @@
         <lastBuildDate>Tue, 23 Jan 2024 22:08:01 +0800</lastBuildDate>
         <category>docker</category>
         <category>Git</category>
-        <category>Nginx</category>
+        <category>设计模式</category>
+        <category>maven</category>
         <category>ORM框架</category>
         <category>MyBatis</category>
+        <category>Nginx</category>
         <category>redis</category>
         <category>spring</category>
         <item>

@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://blog.riversea.top</id>
-    <title>Funkynoob的个人博客 • Posts by &#34;mybatis&#34; tag</title>
+    <title>riversea的个人博客 • Posts by &#34;mybatis&#34; tag</title>
     <link href="https://blog.riversea.top" />
     <updated>2024-01-28T07:12:54.000Z</updated>
     <category term="docker" />
     <category term="Git" />
-    <category term="Nginx" />
+    <category term="设计模式" />
+    <category term="maven" />
     <category term="ORM框架" />
     <category term="MyBatis" />
+    <category term="Nginx" />
     <category term="redis" />
     <category term="spring" />
     <entry>
