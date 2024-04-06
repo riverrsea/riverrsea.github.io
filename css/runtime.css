@@ -1,0 +1,33 @@
+/*悬停显示徽标提示语*/
+a.github-badge:hover:before {
+    position: fixed;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 63%;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+    content: attr(data-title);
+    font-size: 16px;
+    color: #FFE5E5;
+    padding: 5px;
+    background-color: #756AB6;
+}
+
+[data-theme=dark] a.github-badge:hover:before {
+    background-color: rgba(18, 18, 18, 0.8);
+    color: #FFBE98;
+}
+
+@keyframes flashlight {
+    from {
+        box-shadow: 0 0 5px #1478d2;
+    }
+
+    to {
+        box-shadow: 0 0 2px #1478d2;
+    }
+}

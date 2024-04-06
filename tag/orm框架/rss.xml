@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <rss version="2.0">
     <channel>
-        <title>riversea的个人博客 • Posts by &#34;orm框架&#34; tag</title>
+        <title>💃💃Let&#39;s rock💃💃 • Posts by &#34;orm框架&#34; tag</title>
         <link>https://blog.riversea.top</link>
         <description>亿点点心得</description>
         <language>zh-CN</language>
@@ -11,10 +11,11 @@
         <category>Git</category>
         <category>设计模式</category>
         <category>maven</category>
+        <category>Nginx</category>
         <category>ORM框架</category>
         <category>MyBatis</category>
-        <category>Nginx</category>
         <category>redis</category>
+        <category>事务</category>
         <category>spring</category>
         <item>
             <guid isPermalink="true">https://blog.riversea.top/2024/01/28/mybatis/</guid>

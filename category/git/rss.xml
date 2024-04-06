@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <rss version="2.0">
     <channel>
-        <title>riversea的个人博客 • Posts by &#34;git&#34; category</title>
+        <title>💃💃Let&#39;s rock💃💃 • Posts by &#34;git&#34; category</title>
         <link>https://blog.riversea.top</link>
         <description>亿点点心得</description>
         <language>zh-CN</language>
@@ -11,10 +11,11 @@
         <category>Git</category>
         <category>设计模式</category>
         <category>maven</category>
+        <category>Nginx</category>
         <category>ORM框架</category>
         <category>MyBatis</category>
-        <category>Nginx</category>
         <category>redis</category>
+        <category>事务</category>
         <category>spring</category>
         <item>
             <guid isPermalink="true">https://blog.riversea.top/2024/02/17/git/</guid>
@@ -649,7 +650,7 @@
 &lt;p&gt;使用如下命令进行推送：&lt;/p&gt;
 &lt;figure class=&#34;highlight powershell&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs powershell&#34;&gt;git push &amp;lt;remote&amp;gt; &amp;lt;branch&amp;gt;&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;这里有些工作被简化了。  &lt;code&gt;Git&lt;/code&gt;  自动将  &lt;code&gt;&amp;lt;branch&amp;gt;&lt;/code&gt;  分支名字展开为：&lt;/p&gt;
-&lt;figure class=&#34;highlight elixir&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs elixir&#34;&gt;refs/heads/&amp;lt;branch&amp;gt;&lt;span class=&#34;hljs-symbol&#34;&gt;:refs/heads/&amp;lt;branch&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&#34;highlight plaintext&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs plaintext&#34;&gt;refs/heads/&amp;lt;branch&amp;gt;:refs/heads/&amp;lt;branch&amp;gt;&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;你也可以运行以下命令进行推送：&lt;/p&gt;
 &lt;figure class=&#34;highlight powershell&#34;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#34;gutter&#34;&gt;&lt;pre&gt;&lt;span class=&#34;line&#34;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#34;code&#34;&gt;&lt;pre&gt;&lt;code class=&#34;hljs powershell&#34;&gt;git push origin &amp;lt;branch&amp;gt;:&amp;lt;branch&amp;gt;&lt;br&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;它会做同样的事 —— 也就是说 “推送本地的  &lt;code&gt;&amp;lt;branch&amp;gt;&lt;/code&gt;  分支，将其作为远程仓库的  &lt;code&gt;&amp;lt;branch&amp;gt;&lt;/code&gt;  分支” 可以通过这种格式来推送本地分支到一个命名不相同的远程分支。&lt;/p&gt;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <rss version="2.0">
     <channel>
-        <title>riversea的个人博客 • Posts by &#34;依赖管理工具&#34; category</title>
+        <title>💃💃Let&#39;s rock💃💃 • Posts by &#34;依赖管理工具&#34; category</title>
         <link>https://blog.riversea.top</link>
         <description>亿点点心得</description>
         <language>zh-CN</language>
@@ -11,10 +11,11 @@
         <category>Git</category>
         <category>设计模式</category>
         <category>maven</category>
+        <category>Nginx</category>
         <category>ORM框架</category>
         <category>MyBatis</category>
-        <category>Nginx</category>
         <category>redis</category>
+        <category>事务</category>
         <category>spring</category>
         <item>
             <guid isPermalink="true">https://blog.riversea.top/2024/02/17/maven/</guid>
@@ -330,7 +331,7 @@ commons-configuration:commons-configuration:jar:1.8:compile&lt;br&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;默认周期：定义了真正构件时所需要执行的所有步骤，它是生命周期中最核心的部分&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;hljs&#34;&gt;包含命令：compile -  test - package - install - deploy
+&lt;pre&gt;&lt;code&gt;包含命令：compile -  test - package - install - deploy
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/li&gt;
 &lt;li&gt;
