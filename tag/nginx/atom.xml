@@ -7,12 +7,13 @@
     <category term="docker" />
     <category term="设计模式" />
     <category term="Git" />
+    <category term="Nginx" />
+    <category term="rabbitmq" />
     <category term="ORM框架" />
     <category term="MyBatis" />
     <category term="maven" />
-    <category term="Nginx" />
-    <category term="redis" />
     <category term="事务" />
+    <category term="redis" />
     <category term="spring" />
     <entry>
         <id>https://blog.riversea.top/2024/01/23/nginx/</id>

@@ -10,12 +10,13 @@
         <category>docker</category>
         <category>设计模式</category>
         <category>Git</category>
+        <category>Nginx</category>
+        <category>rabbitmq</category>
         <category>ORM框架</category>
         <category>MyBatis</category>
         <category>maven</category>
-        <category>Nginx</category>
-        <category>redis</category>
         <category>事务</category>
+        <category>redis</category>
         <category>spring</category>
         <item>
             <guid isPermalink="true">https://blog.riversea.top/2024/04/05/transaction/</guid>
