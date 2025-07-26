@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>计算机基础知识原理 on riversea</title>
+        <link>http://localhost:1313/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%8E%9F%E7%90%86/</link>
+        <description>Recent content in 计算机基础知识原理 on riversea</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Thu, 24 Jul 2025 13:31:53 +0800</lastBuildDate><atom:link href="http://localhost:1313/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%8E%9F%E7%90%86/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>字符编码简述</title>
+        <link>http://localhost:1313/post/2025/07/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E7%AE%80%E8%BF%B0/</link>
+        <pubDate>Thu, 24 Jul 2025 13:31:53 +0800</pubDate>
+        
+        <guid>http://localhost:1313/post/2025/07/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E7%AE%80%E8%BF%B0/</guid>
+        <description>&lt;h1 id=&#34;编码字符集和字符集编码&#34;&gt;&lt;a href=&#34;#%e7%bc%96%e7%a0%81%e5%ad%97%e7%ac%a6%e9%9b%86%e5%92%8c%e5%ad%97%e7%ac%a6%e9%9b%86%e7%bc%96%e7%a0%81&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;编码字符集和字符集编码
+&lt;/h1&gt;&lt;p&gt;给每一个字符分配一个固定的编号后，所有的字符就有了顺序，形成了&lt;strong&gt;编码字符集&lt;/strong&gt;。比如“汉”可以分配一个固定编号为 &lt;code&gt;0X6C49&lt;/code&gt;
+而&lt;strong&gt;字符集编码&lt;/strong&gt;决定了如何将一个字符的整数编号对应到一个二进制的整数值。几乎绝大部分的编码方案就简单的将整数编号一比一还原到计算机存储中。但有的编码方案，例如适用于 Unicode 字符集的 UTF-8 编码形 式，就将很大一部分字符的整数编号作了变换后存储在计算机中。以“汉”字为例，“汉”的 Unicode 值为 &lt;code&gt;0x6C49&lt;/code&gt; ，但其编码为 UTF-8 格式后的值为 &lt;code&gt;0xE6B189&lt;/code&gt; 注意到变成了三个字节）&lt;/p&gt;
+&lt;h1 id=&#34;unicode-字符集&#34;&gt;&lt;a href=&#34;#unicode-%e5%ad%97%e7%ac%a6%e9%9b%86&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Unicode 字符集
+&lt;/h1&gt;&lt;p&gt;Unicode 字符集又称万国码，是一种&lt;strong&gt;编码字符集&lt;/strong&gt;，设计之初的目的是用于表示世界上的所有字符。Unicode 采用 16 个二进制位来表示字符，因此能表示 &lt;code&gt;2^16 = 65536&lt;/code&gt; 个字符。但 Unicode 字符集规定的编号并不是字符在计算机存储的二进制值。而是以 UTF-8、UTF-16 这样的&lt;strong&gt;字符集编码&lt;/strong&gt;来决定的。&lt;/p&gt;
+&lt;h1 id=&#34;基本字符与增补字符unicode的基础库与扩展包&#34;&gt;&lt;a href=&#34;#%e5%9f%ba%e6%9c%ac%e5%ad%97%e7%ac%a6%e4%b8%8e%e5%a2%9e%e8%a1%a5%e5%ad%97%e7%ac%a6unicode%e7%9a%84%e5%9f%ba%e7%a1%80%e5%ba%93%e4%b8%8e%e6%89%a9%e5%b1%95%e5%8c%85&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;&lt;strong&gt;基本字符与增补字符：Unicode的&amp;quot;基础库&amp;quot;与&amp;quot;扩展包&amp;quot;&lt;/strong&gt;
+&lt;/h1&gt;&lt;p&gt;Unicode 字符集就像一座巨大的图书馆，存放着全球所有的文字、符号和表情。为了方便管理和使用，它被划分为两大区域：&lt;strong&gt;基本字符（基础款）&lt;/strong&gt; 和 &lt;strong&gt;增补字符（扩展包）&lt;/strong&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;-基本字符basic-multilingual-plane-bmp&#34;&gt;&lt;a href=&#34;#-%e5%9f%ba%e6%9c%ac%e5%ad%97%e7%ac%a6basic-multilingual-plane-bmp&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;&lt;strong&gt;📚 基本字符（Basic Multilingual Plane, BMP）&lt;/strong&gt;
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;位置&lt;/strong&gt;：Unicode 的第一个平面（U+0000 ~ U+FFFF）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;包含了 &lt;strong&gt;99% 的日常使用字符&lt;/strong&gt;，如：
+&lt;ul&gt;
+&lt;li&gt;英文（A-Z, a-z）&lt;/li&gt;
+&lt;li&gt;常用汉字（中、文、字）&lt;/li&gt;
+&lt;li&gt;数字（0-9）、标点符号（，。！？）&lt;/li&gt;
+&lt;li&gt;常见符号（@、#、$、%）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;每个字符占用 2 字节（16 位）&lt;/strong&gt;，计算机处理效率高&lt;/li&gt;
+&lt;li&gt;兼容性最好，几乎所有软件和系统都支持&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;-增补字符supplementary-characters&#34;&gt;&lt;a href=&#34;#-%e5%a2%9e%e8%a1%a5%e5%ad%97%e7%ac%a6supplementary-characters&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;&lt;strong&gt;🎁 增补字符（Supplementary Characters）&lt;/strong&gt;
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;位置&lt;/strong&gt;：Unicode 的辅助平面（U+10000 ~ U+10FFFF）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;存放 &lt;strong&gt;超出基本平面容量的扩展内容&lt;/strong&gt;，如：
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Emoji&lt;/strong&gt; 😊🎉🐱‍👤&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;生僻汉字&lt;/strong&gt; 𠀀（U+20000）、𪚥（U+2A6A5）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;古代文字&lt;/strong&gt; 𓀀（埃及象形文字）、𐎀（楔形文字）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特殊符号&lt;/strong&gt; 𝄞（音乐符号）、𝔄（数学花体字母）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;每个字符占用 4 字节（UTF-8）或代理对（UTF-16）&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;需要现代软件和系统支持（部分老旧程序可能无法显示）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;-它们如何协作&#34;&gt;&lt;a href=&#34;#-%e5%ae%83%e4%bb%ac%e5%a6%82%e4%bd%95%e5%8d%8f%e4%bd%9c&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;&lt;strong&gt;🔧 它们如何协作？&lt;/strong&gt;
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;基本字符&lt;/strong&gt; 负责日常文字的显示，速度快、兼容性强。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;增补字符&lt;/strong&gt; 扩展了 Unicode 的表达能力，让计算机能支持更多文字、符号和表情。&lt;/li&gt;
+&lt;li&gt;在编程时，处理增补字符（如 Emoji）可能需要特殊方式，比如：
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Java&lt;/strong&gt; 中 &lt;code&gt;&amp;quot;😊&amp;quot;.length() === 2&lt;/code&gt;（因为用代理对存储）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Python&lt;/strong&gt; 中 &lt;code&gt;len(&amp;quot;😊&amp;quot;) == 1&lt;/code&gt;（正确识别为一个字符）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;-为什么这样设计&#34;&gt;&lt;a href=&#34;#-%e4%b8%ba%e4%bb%80%e4%b9%88%e8%bf%99%e6%a0%b7%e8%ae%be%e8%ae%a1&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;&lt;strong&gt;💡 为什么这样设计？&lt;/strong&gt;
+&lt;/h2&gt;&lt;p&gt;Unicode 最初设计时，&lt;strong&gt;基本字符（BMP）&lt;/strong&gt; 已经能满足大多数需求。但随着计算机发展，人们需要更多符号（如 Emoji、古文字、专业符号），于是 &lt;strong&gt;增补字符&lt;/strong&gt; 被引入，确保 Unicode 能不断扩展，而不破坏原有兼容性。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;总结&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;基本字符&lt;/strong&gt; = 日常使用的标准字符（高效、兼容性强）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;增补字符&lt;/strong&gt; = 扩展的符号、表情、生僻字（功能丰富，但需要现代支持）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;两者结合&lt;/strong&gt;，才让计算机能显示全球所有的文字和符号！ 🌍✨&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;码点和代码单元&#34;&gt;&lt;a href=&#34;#%e7%a0%81%e7%82%b9%e5%92%8c%e4%bb%a3%e7%a0%81%e5%8d%95%e5%85%83&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;码点和代码单元
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;码点（Code Point）&lt;/strong&gt;：是Unicode字符集中每个字符的唯一编号，范围从U+0000到U+10FFFF。例如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;lsquo;A&amp;rsquo; → U+0041&lt;/li&gt;
+&lt;li&gt;&amp;lsquo;中&amp;rsquo; → U+4E2D&lt;/li&gt;
+&lt;li&gt;&amp;lsquo;😊&amp;rsquo; → U+1F60A&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;代码单元（Code Unit）&lt;/strong&gt;：是具体编码方案中表示码位的&lt;strong&gt;基本存储单位&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;UTF-8：使用1-4个8位代码单元&lt;/li&gt;
+&lt;li&gt;UTF-16：使用1-2个16位代码单元&lt;/li&gt;
+&lt;li&gt;UTF-32：固定使用1个32位代码单元&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在UTF-16编码中：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基本字符（U+0000至U+FFFF）直接使用1个16位代码单元&lt;/li&gt;
+&lt;li&gt;增补字符（U+10000及以上）使用2个16位代码单元（代理对）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;高代理与低代理&#34;&gt;&lt;a href=&#34;#%e9%ab%98%e4%bb%a3%e7%90%86%e4%b8%8e%e4%bd%8e%e4%bb%a3%e7%90%86&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;高代理与低代理
+&lt;/h2&gt;&lt;p&gt;UTF-16通过**代理对(Surrogate Pair)**机制，即两个代码单元表示增补字符：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;代理区划分&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;高代理区：U+D800～U+DBFF（1024个码位）&lt;/li&gt;
+&lt;li&gt;低代理区：U+DC00～U+DFFF（1024个码位）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;编码规则&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;将码点减去0x10000，得到20位中间值&lt;/li&gt;
+&lt;li&gt;高10位 + 0xD800 → 高代理&lt;/li&gt;
+&lt;li&gt;低10位 + 0xDC00 → 低代理&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;示例解析&lt;/strong&gt;：
+以‘😊’（U+1F60A）为例：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-1&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-1&#34;&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-2&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-2&#34;&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-3&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-3&#34;&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-4&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-4&#34;&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-5&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-5&#34;&gt;5&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-6&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-6&#34;&gt;6&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-7&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-7&#34;&gt;7&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-8&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-8&#34;&gt;8&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-0-9&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-0-9&#34;&gt;9&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;码点 U+1F60A
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;↓ 减去基准值
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;中间值 0x0F60A（0000 1111 0110 0000 1010）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;↓ 拆分为高低10位
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;高10位：0000 1111 01 → 0x03D
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;低10位：10 0000 1010 → 0x20A
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;↓ 加上代理基值
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;高代理：0xD800 + 0x03D = 0xD83D
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;低代理：0xDC00 + 0x20A = 0xDE0A
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;重要特性&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;代理区码位（U+D800～U+DFFF）不表示独立字符&lt;/li&gt;
+&lt;li&gt;单独出现的高/低代理码元是无效的&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;unicode平面planes补充说明&#34;&gt;&lt;a href=&#34;#unicode%e5%b9%b3%e9%9d%a2planes%e8%a1%a5%e5%85%85%e8%af%b4%e6%98%8e&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Unicode平面（Planes）补充说明
+&lt;/h2&gt;&lt;p&gt;Unicode字符空间被划分为17个平面（Planes），每个平面包含65,536（2^16）个码位。这种划分方式使得Unicode能够系统地组织超过百万个字符。&lt;/p&gt;
+&lt;h3 id=&#34;平面划分详解&#34;&gt;&lt;a href=&#34;#%e5%b9%b3%e9%9d%a2%e5%88%92%e5%88%86%e8%af%a6%e8%a7%a3&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;平面划分详解
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;基本多文种平面（Plane 0，BMP）&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;范围：U+0000～U+FFFF&lt;/li&gt;
+&lt;li&gt;特点：包含最常用的字符，如拉丁字母、汉字基础部分、标点符号等&lt;/li&gt;
+&lt;li&gt;示例：&amp;lsquo;A&amp;rsquo;（U+0041）、&amp;lsquo;中&amp;rsquo;（U+4E2D）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;辅助平面（Plane 1-16）&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;范围：U+10000～U+10FFFF&lt;/li&gt;
+&lt;li&gt;总容量：16×65,536=1,048,576个码位&lt;/li&gt;
+&lt;li&gt;采用代理对机制编码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;重要辅助平面&#34;&gt;&lt;a href=&#34;#%e9%87%8d%e8%a6%81%e8%be%85%e5%8a%a9%e5%b9%b3%e9%9d%a2&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;重要辅助平面
+&lt;/h3&gt;&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;平面编号&lt;/th&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;名称&lt;/th&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;范围&lt;/th&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;主要内容&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;Plane 1&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;补充多文种平面（SMP）&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;U+10000～U+1FFFF&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;历史文字、音乐符号、表情符号等&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;Plane 2&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;补充表意文字平面（SIP）&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;U+20000～U+2FFFF&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;罕见汉字扩展&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;Plane 14&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;特殊用途补充平面（SSP）&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;U+E0000～U+EFFFF&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;标签字符、变体选择符&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;Plane 15-16&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;私人使用区（PUA）&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;U+F0000～U+10FFFF&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;用户自定义字符&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

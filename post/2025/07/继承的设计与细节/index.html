@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="叙述Java中对于继承的设计和细节">
+<title>继承</title>
+
+<link rel='canonical' href='http://localhost:1313/post/2025/07/%E7%BB%A7%E6%89%BF%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E7%BB%86%E8%8A%82/'>
+
+<link rel="stylesheet" href="/scss/style.min.8e19f6311abff7d532a803b9eee144e88462d39350c1614b5c22bea730b00067.css"><meta property='og:title' content="继承">
+<meta property='og:description' content="叙述Java中对于继承的设计和细节">
+<meta property='og:url' content='http://localhost:1313/post/2025/07/%E7%BB%A7%E6%89%BF%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E7%BB%86%E8%8A%82/'>
+<meta property='og:site_name' content='riversea'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='基础' /><meta property='article:published_time' content='2025-07-25T17:46:46&#43;08:00'/><meta property='article:modified_time' content='2025-07-25T17:46:46&#43;08:00'/>
+<meta name="twitter:title" content="继承">
+<meta name="twitter:description" content="叙述Java中对于继承的设计和细节">
+    <link rel="shortcut icon" href="/favicon.svg" />
+
+<style>
+    :root {
+        --article-font-family: "Noto Serif SC", var(--base-font-family);
+    }
+</style>
+<script>  
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+    </head>
+    <body class="
+article-page
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div
+            class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+        
+        <figure class="site-avatar">
+            <a href="/">
+                
+                
+
+                
+                
+                <img src="/avatar_hu_831f7baa72e8d3b.png" width="300"
+                    height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                
+            </a>
+            
+            <span class="emoji">😪</span>
+            
+        </figure>
+        
+        
+
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">riversea</a></h1>
+            <h2 class="site-description">爱像一阵风</h2>
+        </div>
+    </header><ol class="menu-social">
+        
+        <li>
+            <a href='https://space.bilibili.com/33372123' target="_blank"  title="bilibili"  rel="me">
+                
+                
+                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href='https://github.com/riverrsea' target="_blank"  title="github"  rel="me">
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href='mailto:riverrsea@outlook.com' target="_blank"  title="邮箱"  rel="me">
+                
+                
+                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-mail"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /><path d="M3 7l9 6l9 -6" /></svg>
+                
+            </a>
+        </li>
+        
+    </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+<aside class="sidebar right-sidebar sticky">
+    
+    
+    
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#什么是继承">什么是继承</a>
+      <ol>
+        <li><a href="#什么时候使用继承">什么时候使用继承</a></li>
+        <li><a href="#继承的层次结构">继承的层次结构</a></li>
+      </ol>
+    </li>
+    <li><a href="#继承会继承什么">继承会继承什么</a>
+      <ol>
+        <li><a href="#构造函数">构造函数</a></li>
+        <li><a href="#成员变量">成员变量</a></li>
+        <li><a href="#虚方法">虚方法</a>
+          <ol>
+            <li><a href="#理解方法调用">理解方法调用</a>
+              <ol>
+                <li><a href="#动态绑定">动态绑定</a></li>
+                <li><a href="#静态绑定">静态绑定</a></li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+    
+    
+</aside>
+
+
+            <main class="main full-width">
+<article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+        <a href="/categories/java/" >
+            Java
+        </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/post/2025/07/%E7%BB%A7%E6%89%BF%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E7%BB%86%E8%8A%82/">继承</a>
+        </h2>
+
+        
+        <h3 class="article-subtitle">
+            叙述Java中对于继承的设计和细节
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+            <time class="article-time--published">2025-07-25 17:46:46  CST</time>
+        </div>
+        
+        
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+            <time class="article-time--reading">
+                阅读时长: 6 分钟，
+                字数: 2506个字
+
+            </time>
+        </div>
+        
+        <span class="post-word-count"></span>
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="什么是继承"><a href="#%e4%bb%80%e4%b9%88%e6%98%af%e7%bb%a7%e6%89%bf" class="header-anchor"></a>什么是继承
+</h1><p>想象一下对于Secretary类和Manager类，两者共同有相同的字段，比如姓名、职位、工资等等，但Manager类除了工资外还可能有奖金等字段。当我们实现两个类的时候，会声明两份同样的字段和方法，这未免显得太冗余了。因此，我们可以把两个类相同的字段和方法提出来放入另外一个类中，两个类只需要声明他们所需要的字段和方法就好了，其余相同的字段我们只需要从另外一个类中<strong>拿取</strong>下来就好了，这大大减少了代码的冗余。对于拿取，我们其实可以换一个词，那就是<strong>继承</strong>，这个词很形象，现实中儿子可以继承父亲的财产，儿子就相当于拥有了父亲的东西。在Java 中，儿子我们称之为子类或者派生类，父亲称之为父类、超类或者基类。</p>
+<p>比如我们可以让Secretary类和Manager类继承Employee类，这样Manager类和Secretary类可以直接使用Employee类的字段和方法。</p>
+<p>在 <code>Java</code> 中，使用 <code>extends</code> 关键字进行继承，我们以Manager类和Employee类举例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-0-1"><a class="lnlinks" href="#hl-0-1"> 1</a>
+</span><span class="lnt" id="hl-0-2"><a class="lnlinks" href="#hl-0-2"> 2</a>
+</span><span class="lnt" id="hl-0-3"><a class="lnlinks" href="#hl-0-3"> 3</a>
+</span><span class="lnt" id="hl-0-4"><a class="lnlinks" href="#hl-0-4"> 4</a>
+</span><span class="lnt" id="hl-0-5"><a class="lnlinks" href="#hl-0-5"> 5</a>
+</span><span class="lnt" id="hl-0-6"><a class="lnlinks" href="#hl-0-6"> 6</a>
+</span><span class="lnt" id="hl-0-7"><a class="lnlinks" href="#hl-0-7"> 7</a>
+</span><span class="lnt" id="hl-0-8"><a class="lnlinks" href="#hl-0-8"> 8</a>
+</span><span class="lnt" id="hl-0-9"><a class="lnlinks" href="#hl-0-9"> 9</a>
+</span><span class="lnt" id="hl-0-10"><a class="lnlinks" href="#hl-0-10">10</a>
+</span><span class="lnt" id="hl-0-11"><a class="lnlinks" href="#hl-0-11">11</a>
+</span><span class="lnt" id="hl-0-12"><a class="lnlinks" href="#hl-0-12">12</a>
+</span><span class="lnt" id="hl-0-13"><a class="lnlinks" href="#hl-0-13">13</a>
+</span><span class="lnt" id="hl-0-14"><a class="lnlinks" href="#hl-0-14">14</a>
+</span><span class="lnt" id="hl-0-15"><a class="lnlinks" href="#hl-0-15">15</a>
+</span><span class="lnt" id="hl-0-16"><a class="lnlinks" href="#hl-0-16">16</a>
+</span><span class="lnt" id="hl-0-17"><a class="lnlinks" href="#hl-0-17">17</a>
+</span><span class="lnt" id="hl-0-18"><a class="lnlinks" href="#hl-0-18">18</a>
+</span><span class="lnt" id="hl-0-19"><a class="lnlinks" href="#hl-0-19">19</a>
+</span><span class="lnt" id="hl-0-20"><a class="lnlinks" href="#hl-0-20">20</a>
+</span><span class="lnt" id="hl-0-21"><a class="lnlinks" href="#hl-0-21">21</a>
+</span><span class="lnt" id="hl-0-22"><a class="lnlinks" href="#hl-0-22">22</a>
+</span><span class="lnt" id="hl-0-23"><a class="lnlinks" href="#hl-0-23">23</a>
+</span><span class="lnt" id="hl-0-24"><a class="lnlinks" href="#hl-0-24">24</a>
+</span><span class="lnt" id="hl-0-25"><a class="lnlinks" href="#hl-0-25">25</a>
+</span><span class="lnt" id="hl-0-26"><a class="lnlinks" href="#hl-0-26">26</a>
+</span><span class="lnt" id="hl-0-27"><a class="lnlinks" href="#hl-0-27">27</a>
+</span><span class="lnt" id="hl-0-28"><a class="lnlinks" href="#hl-0-28">28</a>
+</span><span class="lnt" id="hl-0-29"><a class="lnlinks" href="#hl-0-29">29</a>
+</span><span class="lnt" id="hl-0-30"><a class="lnlinks" href="#hl-0-30">30</a>
+</span><span class="lnt" id="hl-0-31"><a class="lnlinks" href="#hl-0-31">31</a>
+</span><span class="lnt" id="hl-0-32"><a class="lnlinks" href="#hl-0-32">32</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">salary</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">LocalDate</span><span class="w"> </span><span class="n">hireDay</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//省略构造方法和getter、setter方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">raiseSalary</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">byPercent</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kt">double</span><span class="w"> </span><span class="n">raise</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">byPercent</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">100</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">salary</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">raise</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Manager</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//Manager自身的奖金字段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//省略构造方法和getter、setter方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//Manager自身的方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setBonus</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">bonus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Test</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Manager</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Manger</span><span class="p">(....);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">m</span><span class="p">.</span><span class="na">raiseSalary</span><span class="p">(...);</span><span class="w"> </span><span class="c1">//Manager并没有声明这个方法，但是Manager从Employee中继承下来了，可以直接访问</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//.....</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>注意，上述说明并没有提到继承的方法和字段的修饰符和访问范围，这点将在下方进行说明</p>
+</blockquote>
+<h2 id="什么时候使用继承"><a href="#%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99%e4%bd%bf%e7%94%a8%e7%bb%a7%e6%89%bf" class="header-anchor"></a>什么时候使用继承
+</h2><p>当类的关系满足&quot;is-a&quot;关系，即类b就是类a的关系，而且可以被抽取相同的字段或者方法出来时，即可使用继承。例如Manager类和Employee类，经理本身就是员工且Manager类和Employee类有相同的字段和方法，因此可以使用继承。</p>
+<h2 id="继承的层次结构"><a href="#%e7%bb%a7%e6%89%bf%e7%9a%84%e5%b1%82%e6%ac%a1%e7%bb%93%e6%9e%84" class="header-anchor"></a>继承的层次结构
+</h2><p>Java 中只允许类的<strong>单个继承</strong>，即<strong>一个类只能继承另一个类</strong>，但允许一个类被多个类继承，从而形成从上往下的<strong>层次结构</strong>，例如下图所示：</p>
+<pre class="mermaid">
+    %%{init: {&#39;themeVariables&#39;: {&#39;primaryColor&#39;: &#39;#fff&#39;}, &#39;themeConfig&#39;: {&#39;nodeTextMargin&#39;: 4}}}%%
+classDiagram
+    class Employee
+    class Manager
+    class Secretary
+    class Programmer
+    class Executive
+
+    Employee &lt;|-- Manager
+    Employee &lt;|-- Secretary
+    Employee &lt;|-- Programmer
+    Manager &lt;|-- Executive
+</pre>
+<p>任何类都能被继承，包括继承于其他类的类。Java 模糊了父类的概念，对于“祖父类”、“组祖父类”等比本类层级更高的类会被统称为<strong>父类</strong>，直接继承的称为<strong>直接父类</strong>，间接继承的称为<strong>间接父类</strong>，因此任何类都能够继承“祖父类”、“组祖父类”等父类的字段和方法。例如上图中的Executive类能够使用Manager类和Employee类的字段和方法。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>当类被final关键字修饰时，其本身不允许被继承。</p>
+</blockquote>
+<h1 id="继承会继承什么"><a href="#%e7%bb%a7%e6%89%bf%e4%bc%9a%e7%bb%a7%e6%89%bf%e4%bb%80%e4%b9%88" class="header-anchor"></a>继承会继承什么
+</h1><p>子类并不会继承父类所有的东西，下面我们先给出结论：</p>
+<ul>
+<li>构造函数无法被继承</li>
+<li>父类的所有成员变量都可以被继承，包括私有和非私有</li>
+<li>父类的虚方法可以被继承</li>
+</ul>
+<p>下面我们来对上述结论进行一一解释</p>
+<h2 id="构造函数"><a href="#%e6%9e%84%e9%80%a0%e5%87%bd%e6%95%b0" class="header-anchor"></a>构造函数
+</h2><p>构造函数是最不可能被继承的一个方法。我们可以使用反证法来证明，若构造函数可以被继承，则子类可以使用此构造函数创建对象。这样以来就违反了构造函数的特征——方法名需要与类名相同。因此该命题出错，那么显然只能是条件就出错了。因此，父类的构造函数不能够被继承。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-important">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25
+    13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0
+    .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0
+    0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+        </svg>
+        <span>重要</span>
+    </p>
+    <p>构造函数的两大特征：</p>
+<ol>
+<li>没有返回值</li>
+<li>方法名需要与类名相同</li>
+</ol>
+</blockquote>
+<h2 id="成员变量"><a href="#%e6%88%90%e5%91%98%e5%8f%98%e9%87%8f" class="header-anchor"></a>成员变量
+</h2><p>在介绍之前，有必要先简要介绍一下虚拟机的内存分布：</p>
+<ul>
+<li>
+<p>栈空间：用于存放执行的方法的空间。</p>
+<ul>
+<li>当方法执行时，会将方法入栈，期间所有的局部变量都会在该空间内分配。</li>
+<li>当方法执行完成之后，方法就会出栈，同时方法中声明的局部变量的空间将会被释放。</li>
+</ul>
+</li>
+<li>
+<p>堆空间：用于存放对象的空间。</p>
+<ul>
+<li>当使用new关键字创建对象时，会在堆空间开辟一个对象的空间，随后对对象的字段进行初始化。并将该空间的地址返回给引用这个对象的变量。</li>
+</ul>
+</li>
+<li>
+<p>方法区：用于存放字节码文件。</p>
+<ul>
+<li>当第一次使用到某个类时，该类的字节码文件会被加载到该区域中。</li>
+<li><code>JDK8</code> 以后该区域变成了元空间，但我们不去讨论这些，仅仅做一些如上的简要介绍。</li>
+</ul>
+</li>
+</ul>
+<p>经过上面的介绍，我们现在可以对成员变量的继承进行一个总述了：</p>
+<p>当对某一个对象进行创建时，会在堆空间开辟一个区域存放该对象，由于子类可以继承父类的所有成员变量，因此会从类继承的层次结构的顶层开始，依次对类的成员变量进行初始化，直到本类的字段初始化完成，最终形成了一个对象。对于非私有的变量，允许访问，但对于私有的变量，则无法进行访问，尽管其仍被分配了空间。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-important">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25
+    13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0
+    .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0
+    0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+        </svg>
+        <span>重要</span>
+    </p>
+    <p>对于没有继承任何类的类，虚拟机最终会让他继承Object类，所有类都派生于Object类，即Object类是所有类的父类。</p>
+</blockquote>
+<h2 id="虚方法"><a href="#%e8%99%9a%e6%96%b9%e6%b3%95" class="header-anchor"></a>虚方法
+</h2><p>我们把没有被final、static、private修饰的方法成为<strong>虚方法</strong>。只有虚方法才能被继承。</p>
+<h3 id="理解方法调用"><a href="#%e7%90%86%e8%a7%a3%e6%96%b9%e6%b3%95%e8%b0%83%e7%94%a8" class="header-anchor"></a>理解方法调用
+</h3><p>所有类的成员方法并不会存储到<strong>堆空间</strong>中，而是存放在<strong>方法区</strong>中，以字节码的形式存储。每个类的字节码文件会存放着该类的<strong>虚方法表</strong>，该表记录着所有可以被继承的方法，即<strong>虚方法</strong>。当使用一个类时，其字节码会被加载到方法区中，同时会沿着继承链把其父类的字节码文件加载进方法区中，这个过程会一直到最顶层的Object类。当类被加载后，虚拟机会为该类计算出一份虚方法表，父类的虚方法表会移交给子类，子类会基于父类的虚方法表并添加上自己的虚方法生成一份自己的，并移交给自己的子类。这样，处于继承层次结构底层的类就会有一份包含父类的<strong>虚方法</strong>以及自己的<strong>虚方法</strong>的虚方法表。</p>
+<h4 id="动态绑定"><a href="#%e5%8a%a8%e6%80%81%e7%bb%91%e5%ae%9a" class="header-anchor"></a>动态绑定
+</h4><p>当一个类调用一个虚方法时，虚拟机就会去访问这个类型的方法表，例如<a class="link" href="#%e4%bb%80%e4%b9%88%e6%98%af%e7%bb%a7%e6%89%bf" >第一节</a>中给的例子，第29行中调用的 <code>raiseSalary()</code> 方法，虚拟机准确的找到了调用者的类型为Manager，于是去访问他的虚方法表，Manager类型继承了Employee类型的虚方法表，里面就有 <code>raiseSalary()</code>  方法，因此可以访问。这个过程称为<strong>动态绑定</strong></p>
+<h4 id="静态绑定"><a href="#%e9%9d%99%e6%80%81%e7%bb%91%e5%ae%9a" class="header-anchor"></a>静态绑定
+</h4><p>对于非虚方法以及构造方法，虚拟机准确的知道该调用哪些方法，会在编译时就准确的绑定了，不会在运行时绑定，这个过程成为<strong>静态绑定</strong>。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-warning">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75
+    0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53
+    3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+        </svg>
+        <span>警告</span>
+    </p>
+    <p>长期以来的一个误解，对于一个方法，虚拟机会依次沿着继承链向上寻找这个方法。这个过程其实是错误的，或者是片面的，因为只有构造方法才会沿着继承链向上依次调用构造方法。</p>
+</blockquote>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E5%9F%BA%E7%A1%80/">基础</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+
+
+
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/post/2025/07/java%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%AE%BE%E8%AE%A1/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java中的字符与字符串设计</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+
+
+
+
+
+<footer class="site-footer">
+    <section class="copyright">
+        &copy;
+        
+        2025 riversea
+    </section>
+
+    <section class="powerby">
+        
+
+        
+    </section>
+
+    <section class="badges">
+        
+        
+        <a href="https://github.com/riverrsea" target="_blank" rel="noopener" class="badge">
+            <img src="https://img.shields.io/badge/Github-riverrsea-blue?logo=github" alt="Github" />
+        </a>
+        
+        <a href="https://gohugo.io/" target="_blank" rel="noopener" class="badge">
+            <img src="https://img.shields.io/badge/Hugo-%e5%bf%ab%e9%80%9f%e6%9e%84%e5%bb%ba-pink?logo=hugo" alt="Hugo" />
+        </a>
+        
+        <a href="https://pages.github.com/" target="_blank" rel="noopener" class="badge">
+            <img src="https://img.shields.io/badge/%E2%80%8B-%e6%89%98%e7%ae%a1%e5%b9%b3%e5%8f%b0-pink?logo=githubpages&amp;logoSize=auto" alt="Github pages" />
+        </a>
+        
+        
+    </section>
+</footer>
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.2a16269f22bddc9518655adff62d668b9b76c1abc7e0bfe9821180b512f06285.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+        
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({ startOnLoad: true });
+        </script>
+        
+    </body>
+</html>

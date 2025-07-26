@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="总结一下Java在设计字符以及字符串时候的思想以及原理">
+<title>Java中的字符与字符串设计</title>
+
+<link rel='canonical' href='http://localhost:1313/post/2025/07/java%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%AE%BE%E8%AE%A1/'>
+
+<link rel="stylesheet" href="/scss/style.min.8e19f6311abff7d532a803b9eee144e88462d39350c1614b5c22bea730b00067.css"><meta property='og:title' content="Java中的字符与字符串设计">
+<meta property='og:description' content="总结一下Java在设计字符以及字符串时候的思想以及原理">
+<meta property='og:url' content='http://localhost:1313/post/2025/07/java%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%AE%BE%E8%AE%A1/'>
+<meta property='og:site_name' content='riversea'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='基础' /><meta property='article:published_time' content='2025-07-24T13:31:53&#43;08:00'/><meta property='article:modified_time' content='2025-07-24T13:31:53&#43;08:00'/>
+<meta name="twitter:title" content="Java中的字符与字符串设计">
+<meta name="twitter:description" content="总结一下Java在设计字符以及字符串时候的思想以及原理">
+    <link rel="shortcut icon" href="/favicon.svg" />
+
+<style>
+    :root {
+        --article-font-family: "Noto Serif SC", var(--base-font-family);
+    }
+</style>
+<script>  
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+    </head>
+    <body class="
+article-page
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div
+            class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+        
+        <figure class="site-avatar">
+            <a href="/">
+                
+                
+
+                
+                
+                <img src="/avatar_hu_831f7baa72e8d3b.png" width="300"
+                    height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+                
+            </a>
+            
+            <span class="emoji">😪</span>
+            
+        </figure>
+        
+        
+
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">riversea</a></h1>
+            <h2 class="site-description">爱像一阵风</h2>
+        </div>
+    </header><ol class="menu-social">
+        
+        <li>
+            <a href='https://space.bilibili.com/33372123' target="_blank"  title="bilibili"  rel="me">
+                
+                
+                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-brand-bilibili"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 10a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v6a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4v-6z" /><path d="M8 3l2 3" /><path d="M16 3l-2 3" /><path d="M9 13v-2" /><path d="M15 11v2" /></svg>
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href='https://github.com/riverrsea' target="_blank"  title="github"  rel="me">
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href='mailto:riverrsea@outlook.com' target="_blank"  title="邮箱"  rel="me">
+                
+                
+                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-mail"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /><path d="M3 7l9 6l9 -6" /></svg>
+                
+            </a>
+        </li>
+        
+    </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+<aside class="sidebar right-sidebar sticky">
+    
+    
+    
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#字符">字符</a></li>
+    <li><a href="#字符串">字符串</a>
+      <ol>
+        <li><a href="#字符串常量的共享">字符串常量的共享</a></li>
+        <li><a href="#字符串拼接">字符串拼接</a></li>
+      </ol>
+    </li>
+    <li><a href="#stringbuilder"><code>StringBuilder</code></a>
+      <ol>
+        <li><a href="#tostring-的底层原理"><code>toString()</code> 的底层原理</a></li>
+        <li><a href="#stringbuilder-的扩容机制"><code>StringBuilder</code> 的扩容机制</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+    
+    
+</aside>
+
+
+            <main class="main full-width">
+<article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+        <a href="/categories/java/" >
+            Java
+        </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/post/2025/07/java%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%AE%BE%E8%AE%A1/">Java中的字符与字符串设计</a>
+        </h2>
+
+        
+        <h3 class="article-subtitle">
+            总结一下Java在设计字符以及字符串时候的思想以及原理
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+            <time class="article-time--published">2025-07-24 13:31:53  CST</time>
+        </div>
+        
+        
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+            <time class="article-time--reading">
+                阅读时长: 8 分钟，
+                字数: 3617个字
+
+            </time>
+        </div>
+        
+        <span class="post-word-count"></span>
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="字符"><a href="#%e5%ad%97%e7%ac%a6" class="header-anchor"></a>字符
+</h1><p>Java使用 <code>char</code> 类型来表示一个字符。在讨论这个类型前，我们先来说说 <code>Unicode</code> 字符集。</p>
+<p>在1991年 <code>Unicode1.0</code> 发布了，最初的想法是使用 <code>2B = 16bit</code> 来表示最多65536个字符，而当时仅占用65536个代码值中不到一半的部分。因此Java在设计之初决定采用 <code>Unicode</code> 编码字符集来表示字符，采用 <code>UTF-16</code>  字符集编码来编码字符。然而遗憾的是，经过一段时间后，不可避免的事情发生了。<code>Unicode</code> 字符超过了65536个，其主要原因是增加了汉语、日语和韩语中的大量表意文字。现在，16位的 <code>char</code> 类型已经不足以描述所有 <code>Unicode</code> 字符了。</p>
+<p>Java采用<strong>码点</strong>(<code>Code Point</code>)与<strong>代码单元</strong>(<code>Code Unit</code>)来解决这个问题。关于码点和代码单元的介绍以及字符集编码和编码字符集的区别，请参考<a class="link" href="/post/2025/07/%e5%ad%97%e7%ac%a6%e7%bc%96%e7%a0%81%e7%ae%80%e8%bf%b0/" >这篇文章</a>。这里简单叙述一下：<code>UTF-16</code> 编码以 2B 为一个代码单元，代码单元是字符编码的基本单位。码点是字符在 <code>Unicode</code> 字符集的位置，使用 <code>U+xxxxx</code> 表示。</p>
+<p><code>char</code> 类型就是一个<strong>代码单元</strong>，只能表示<strong>基本字符</strong>，若要表示例如 <code>😀</code>(<code>U+1F600</code>) 的<strong>辅助字符</strong>，必须使用一对<strong>代码单元</strong>来表示，因此只能将字符抽象为<strong>字符串</strong>来解决这个问题。</p>
+<h1 id="字符串"><a href="#%e5%ad%97%e7%ac%a6%e4%b8%b2" class="header-anchor"></a>字符串
+</h1><p>Java使用 <code>String</code> 类型来表示一个字符串。使用字符串则能表示字符类型无法表示的<strong>辅助字符</strong>。在 <code>JDK9</code> 之前 <code>String</code> 类型的底层实现是一个字符类型的数组，我们由此窥探一下 <code>String</code>  类型是如何解决字符类型无法表示<strong>辅助字符</strong>的困境的。</p>
+<p>前面提到字符类型本身就是一个<strong>代码单元</strong>，而数组就给了实现一对<strong>代码单元</strong>的可能。对于辅助字符，在字符串中会变成两个代码单元，比如<code>😀</code>(<code>U+1F600</code>) 将会变为 <code>0xD83D</code>（高代理）和 <code>0xDE00</code>（低代理），存入字符串后，两个代码单元将被放入数组中连着的两个位置中。这样一个辅助字符就能够存储起来了。对于字符类型来说，其本身就是<strong>一个代码单元</strong>，即可用来表示一个真实的字符，也可以表示<strong>辅助字符</strong>的其中一个<strong>代码单元</strong>。</p>
+<p>而在 <code>JDK9</code> 之后，字符类型的数组被换成了字节型的数组，这是对存储拉丁字符的一个优化，对于类似英文字母这样的字符，使用一个字节表示即可，使用两个字节进行存储实在太浪费空间了。</p>
+<h2 id="字符串常量的共享"><a href="#%e5%ad%97%e7%ac%a6%e4%b8%b2%e5%b8%b8%e9%87%8f%e7%9a%84%e5%85%b1%e4%ba%ab" class="header-anchor"></a>字符串常量的共享
+</h2><p>字符串类型可以使用 <code>String str = &quot;xxxxx&quot;</code> 这种形式来赋值。对于字符串常量来说，虚拟机首先会在字符串常量池中查找是否有相同的字符串常量，如果没有就将该字符串常量存入字符串常量池，并将地址返回给字符串变量；如果找到了的话，则将找到的字符串的地址返回给字符串变量，该字符串常量不再存入字符串常量池。因此可以将字符串常量理解为一个实实在在的<strong>指针</strong>(<strong>引用</strong>)。而对于使用 <code>subString()</code> 或者 <code>+</code> 生成的字符串，将不会进行共享。</p>
+<h2 id="字符串拼接"><a href="#%e5%ad%97%e7%ac%a6%e4%b8%b2%e6%8b%bc%e6%8e%a5" class="header-anchor"></a>字符串拼接
+</h2><p>在Java中可以使用 <code>+</code> 拼接或者使用 <code>StringBuilder</code> 类提供的例如 <code>append()</code> 方法进行拼接。我们首先来介绍一下加号拼接的底层原理。</p>
+<ol>
+<li>
+<p>首先对于字符串常量的拼接，Java对其有一定的优化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-0-1"><a class="lnlinks" href="#hl-0-1">1</a>
+</span><span class="lnt" id="hl-0-2"><a class="lnlinks" href="#hl-0-2">2</a>
+</span><span class="lnt" id="hl-0-3"><a class="lnlinks" href="#hl-0-3">3</a>
+</span><span class="lnt" id="hl-0-4"><a class="lnlinks" href="#hl-0-4">4</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 使用javac编译为class文件后，这段语句将会直接被拼接在一起</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;a&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;b&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;c&#34;</span><span class="p">;</span><span class="w"> </span><span class="c1">// String str1 = &#34;abc&#34;;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">str2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;abc&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">str1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">str2</span><span class="p">)</span><span class="w"> </span><span class="c1">//true</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>对于字符串变量的拼接，每次拼接都会生成新的对象：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-1-1"><a class="lnlinks" href="#hl-1-1">1</a>
+</span><span class="lnt" id="hl-1-2"><a class="lnlinks" href="#hl-1-2">2</a>
+</span><span class="lnt" id="hl-1-3"><a class="lnlinks" href="#hl-1-3">3</a>
+</span><span class="lnt" id="hl-1-4"><a class="lnlinks" href="#hl-1-4">4</a>
+</span><span class="lnt" id="hl-1-5"><a class="lnlinks" href="#hl-1-5">5</a>
+</span><span class="lnt" id="hl-1-6"><a class="lnlinks" href="#hl-1-6">6</a>
+</span><span class="lnt" id="hl-1-7"><a class="lnlinks" href="#hl-1-7">7</a>
+</span><span class="lnt" id="hl-1-8"><a class="lnlinks" href="#hl-1-8">8</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">String</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">in</span><span class="p">.</span><span class="na">next</span><span class="p">();</span><span class="w"> </span><span class="c1">//in 为Scanner的对象</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;a&#34;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;b&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">String</span><span class="w"> </span><span class="n">str2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&#34;c&#34;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">第一行输入一个字符串常量，该字符串常量将被存入字符串常量池
+</span></span></span><span class="line"><span class="cl"><span class="cm">第二行，将会把&#34;a&#34;存入常量池，随后和str进行拼接，拼接前将会生成一个StringBuilder对象，并执行append方法，再转换为字符串；随后再执行一次上述过程与&#34;b&#34;进行拼接。这个过程将会产生两个StringBuilder对象以及两个字符串对象，耗费时间和空间。
+</span></span></span><span class="line"><span class="cl"><span class="cm">第三行与第二行类似。
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>可见使用加号拼接字符串非常消耗资源和时间，并且使用加号拼接生成的字符串不会共享地址，详情会在下一节介绍。因此对于过多的字符串拼接，最好使用 <code>StringBuilder</code> 进行拼接。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>以上为 <code>JDK8</code> 以前的拼接机制，<code>JDK8</code> 以后，每次拼接，虚拟机将会预估字符串所需的长度，生成数组进行存放。虽然节省了空间和时间，但预估字符串长度仍需要时间。</p>
+</blockquote>
+</li>
+</ol>
+<h1 id="stringbuilder"><a href="#stringbuilder" class="header-anchor"></a><code>StringBuilder</code>
+</h1><p><code>StringBuilder</code> 是一个类专门来处理字符串拼接问题。<code>StringBuilder</code> 的常用 API 如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-2-1"><a class="lnlinks" href="#hl-2-1">1</a>
+</span><span class="lnt" id="hl-2-2"><a class="lnlinks" href="#hl-2-2">2</a>
+</span><span class="lnt" id="hl-2-3"><a class="lnlinks" href="#hl-2-3">3</a>
+</span><span class="lnt" id="hl-2-4"><a class="lnlinks" href="#hl-2-4">4</a>
+</span><span class="lnt" id="hl-2-5"><a class="lnlinks" href="#hl-2-5">5</a>
+</span><span class="lnt" id="hl-2-6"><a class="lnlinks" href="#hl-2-6">6</a>
+</span><span class="lnt" id="hl-2-7"><a class="lnlinks" href="#hl-2-7">7</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="nf">StringBuilder</span><span class="p">();</span><span class="w"> </span><span class="c1">//生成StringBuilder对象，将会生成一个空字符串(不是null)，默认容量为16</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="nf">StringBuilder</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">capacity</span><span class="p">);</span><span class="w"> </span><span class="c1">//生成StringBuilder对象，将会生成一个空字符串(不是null)，容量为传入的capacity</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="nf">StringBuilder</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">str</span><span class="p">);</span><span class="w"> </span><span class="c1">//生成StringBuilder对象，将会生成一个str，容量为16</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">StringBuilder</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">str</span><span class="p">);</span><span class="w"> </span><span class="c1">//拼接字符串</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">toString</span><span class="p">();</span><span class="w"> </span><span class="c1">//返回存储的字符串对象</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">capacity</span><span class="p">();</span><span class="w"> </span><span class="c1">//返回StringBuilder对象的容量</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">length</span><span class="p">();</span><span class="w"> </span><span class="c1">//返回已经存储的字符串的长度</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>你可以把 <code>StringBuilder</code> 当成一个容器，<code>StringBuilder</code> 的容量代表着其能存储多长的字符串，<code>length</code> 则代表已经存入字符串的长度，两者之差即是还能存储的字符串的长度</p>
+</blockquote>
+<h2 id="tostring-的底层原理"><a href="#tostring-%e7%9a%84%e5%ba%95%e5%b1%82%e5%8e%9f%e7%90%86" class="header-anchor"></a><code>toString()</code> 的底层原理
+</h2><p>上述内容曾说过，只有字符串常量才会共享地址，对于使用 <code>new</code> 关键字产生的字符串对象会存放在堆里，并不会进行地址共享。而对于 <code>toString()</code> 来说，翻看源码会发现，正是使用了 <code>new</code> 关键字产生的一个字符串对象。所以，使用 <code>StringBuilder</code> 产生的字符串并不会共享地址。至此，我们就可以解答上一节留下的问题，使用加号拼接的字符串，会使用 <code>StringBuilder</code> 进行拼接，最后使用 <code>toString()</code> 转换为字符串，因此，这个拼接后的字符串不会共享地址。</p>
+<h2 id="stringbuilder-的扩容机制"><a href="#stringbuilder-%e7%9a%84%e6%89%a9%e5%ae%b9%e6%9c%ba%e5%88%b6" class="header-anchor"></a><code>StringBuilder</code> 的扩容机制
+</h2><p><code>StringBuilder</code> 的扩容机制，可以简单地概括为三个点：</p>
+<ul>
+<li><code>StringBuilder</code>  生成后以用户传入的容量(默认16)作为原始容量</li>
+<li>当拼接的字符串大于容量后，以2*原始容量+2的方式进行扩容</li>
+<li>当拼接的字符串大于2*原始容量+2，则以拼接的字符串后的长度为容量</li>
+</ul>
+<p>下面我们来看具体的源码。需要注意的是，<code>StringBuilder</code>  继承自抽象类 <code>AbstractStringBuilder</code> ，类图如下：</p>
+<pre class="mermaid">
+    classDiagram
+    direction LR
+    class AbstractStringBuilder {
+        &lt;&lt;abstract&gt;&gt;
+        #byte[] value
+        #int count
+        #AbstractStringBuilder()
+        #AbstractStringBuilder(int capacity)
+        +append(obj: Object) AbstractStringBuilder
+        +append(str: String) AbstractStringBuilder
+        +length() int
+        +capacity() int
+    }
+
+    class StringBuilder {
+        +StringBuilder()
+        +StringBuilder(int capacity)
+        +StringBuilder(String str)
+        +append(obj: Object) StringBuilder
+        +append(str: String) StringBuilder
+        +reverse() StringBuilder
+        +toString() String
+    }
+
+    AbstractStringBuilder &lt;|-- StringBuilder : 继承
+</pre>
+
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>由类图我们可以发现，<code>StringBuilder</code> 存储字符串依旧使用的是字节数组，这和字符串底层实现是一样的。</p>
+</blockquote>
+<p>进入 <code>StringBuilder</code>  的字符串的 <code>append(String)</code> 方法，源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-4-1"><a class="lnlinks" href="#hl-4-1"> 1</a>
+</span><span class="lnt" id="hl-4-2"><a class="lnlinks" href="#hl-4-2"> 2</a>
+</span><span class="lnt" id="hl-4-3"><a class="lnlinks" href="#hl-4-3"> 3</a>
+</span><span class="lnt" id="hl-4-4"><a class="lnlinks" href="#hl-4-4"> 4</a>
+</span><span class="lnt" id="hl-4-5"><a class="lnlinks" href="#hl-4-5"> 5</a>
+</span><span class="lnt" id="hl-4-6"><a class="lnlinks" href="#hl-4-6"> 6</a>
+</span><span class="lnt" id="hl-4-7"><a class="lnlinks" href="#hl-4-7"> 7</a>
+</span><span class="lnt" id="hl-4-8"><a class="lnlinks" href="#hl-4-8"> 8</a>
+</span><span class="lnt" id="hl-4-9"><a class="lnlinks" href="#hl-4-9"> 9</a>
+</span><span class="lnt" id="hl-4-10"><a class="lnlinks" href="#hl-4-10">10</a>
+</span><span class="lnt" id="hl-4-11"><a class="lnlinks" href="#hl-4-11">11</a>
+</span><span class="lnt" id="hl-4-12"><a class="lnlinks" href="#hl-4-12">12</a>
+</span><span class="lnt" id="hl-4-13"><a class="lnlinks" href="#hl-4-13">13</a>
+</span><span class="lnt" id="hl-4-14"><a class="lnlinks" href="#hl-4-14">14</a>
+</span><span class="lnt" id="hl-4-15"><a class="lnlinks" href="#hl-4-15">15</a>
+</span><span class="lnt" id="hl-4-16"><a class="lnlinks" href="#hl-4-16">16</a>
+</span><span class="lnt" id="hl-4-17"><a class="lnlinks" href="#hl-4-17">17</a>
+</span><span class="lnt" id="hl-4-18"><a class="lnlinks" href="#hl-4-18">18</a>
+</span><span class="lnt" id="hl-4-19"><a class="lnlinks" href="#hl-4-19">19</a>
+</span><span class="lnt" id="hl-4-20"><a class="lnlinks" href="#hl-4-20">20</a>
+</span><span class="lnt" id="hl-4-21"><a class="lnlinks" href="#hl-4-21">21</a>
+</span><span class="lnt" id="hl-4-22"><a class="lnlinks" href="#hl-4-22">22</a>
+</span><span class="lnt" id="hl-4-23"><a class="lnlinks" href="#hl-4-23">23</a>
+</span><span class="lnt" id="hl-4-24"><a class="lnlinks" href="#hl-4-24">24</a>
+</span><span class="lnt" id="hl-4-25"><a class="lnlinks" href="#hl-4-25">25</a>
+</span><span class="lnt" id="hl-4-26"><a class="lnlinks" href="#hl-4-26">26</a>
+</span><span class="lnt" id="hl-4-27"><a class="lnlinks" href="#hl-4-27">27</a>
+</span><span class="lnt" id="hl-4-28"><a class="lnlinks" href="#hl-4-28">28</a>
+</span><span class="lnt" id="hl-4-29"><a class="lnlinks" href="#hl-4-29">29</a>
+</span><span class="lnt" id="hl-4-30"><a class="lnlinks" href="#hl-4-30">30</a>
+</span><span class="lnt" id="hl-4-31"><a class="lnlinks" href="#hl-4-31">31</a>
+</span><span class="lnt" id="hl-4-32"><a class="lnlinks" href="#hl-4-32">32</a>
+</span><span class="lnt" id="hl-4-33"><a class="lnlinks" href="#hl-4-33">33</a>
+</span><span class="lnt" id="hl-4-34"><a class="lnlinks" href="#hl-4-34">34</a>
+</span><span class="lnt" id="hl-4-35"><a class="lnlinks" href="#hl-4-35">35</a>
+</span><span class="lnt" id="hl-4-36"><a class="lnlinks" href="#hl-4-36">36</a>
+</span><span class="lnt" id="hl-4-37"><a class="lnlinks" href="#hl-4-37">37</a>
+</span><span class="lnt" id="hl-4-38"><a class="lnlinks" href="#hl-4-38">38</a>
+</span><span class="lnt" id="hl-4-39"><a class="lnlinks" href="#hl-4-39">39</a>
+</span><span class="lnt" id="hl-4-40"><a class="lnlinks" href="#hl-4-40">40</a>
+</span><span class="lnt" id="hl-4-41"><a class="lnlinks" href="#hl-4-41">41</a>
+</span><span class="lnt" id="hl-4-42"><a class="lnlinks" href="#hl-4-42">42</a>
+</span><span class="lnt" id="hl-4-43"><a class="lnlinks" href="#hl-4-43">43</a>
+</span><span class="lnt" id="hl-4-44"><a class="lnlinks" href="#hl-4-44">44</a>
+</span><span class="lnt" id="hl-4-45"><a class="lnlinks" href="#hl-4-45">45</a>
+</span><span class="lnt" id="hl-4-46"><a class="lnlinks" href="#hl-4-46">46</a>
+</span><span class="lnt" id="hl-4-47"><a class="lnlinks" href="#hl-4-47">47</a>
+</span><span class="lnt" id="hl-4-48"><a class="lnlinks" href="#hl-4-48">48</a>
+</span><span class="lnt" id="hl-4-49"><a class="lnlinks" href="#hl-4-49">49</a>
+</span><span class="lnt" id="hl-4-50"><a class="lnlinks" href="#hl-4-50">50</a>
+</span><span class="lnt" id="hl-4-51"><a class="lnlinks" href="#hl-4-51">51</a>
+</span><span class="lnt" id="hl-4-52"><a class="lnlinks" href="#hl-4-52">52</a>
+</span><span class="lnt" id="hl-4-53"><a class="lnlinks" href="#hl-4-53">53</a>
+</span><span class="lnt" id="hl-4-54"><a class="lnlinks" href="#hl-4-54">54</a>
+</span><span class="lnt" id="hl-4-55"><a class="lnlinks" href="#hl-4-55">55</a>
+</span><span class="lnt" id="hl-4-56"><a class="lnlinks" href="#hl-4-56">56</a>
+</span><span class="lnt" id="hl-4-57"><a class="lnlinks" href="#hl-4-57">57</a>
+</span><span class="lnt" id="hl-4-58"><a class="lnlinks" href="#hl-4-58">58</a>
+</span><span class="lnt" id="hl-4-59"><a class="lnlinks" href="#hl-4-59">59</a>
+</span><span class="lnt" id="hl-4-60"><a class="lnlinks" href="#hl-4-60">60</a>
+</span><span class="lnt" id="hl-4-61"><a class="lnlinks" href="#hl-4-61">61</a>
+</span><span class="lnt" id="hl-4-62"><a class="lnlinks" href="#hl-4-62">62</a>
+</span><span class="lnt" id="hl-4-63"><a class="lnlinks" href="#hl-4-63">63</a>
+</span><span class="lnt" id="hl-4-64"><a class="lnlinks" href="#hl-4-64">64</a>
+</span><span class="lnt" id="hl-4-65"><a class="lnlinks" href="#hl-4-65">65</a>
+</span><span class="lnt" id="hl-4-66"><a class="lnlinks" href="#hl-4-66">66</a>
+</span><span class="lnt" id="hl-4-67"><a class="lnlinks" href="#hl-4-67">67</a>
+</span><span class="lnt" id="hl-4-68"><a class="lnlinks" href="#hl-4-68">68</a>
+</span><span class="lnt" id="hl-4-69"><a class="lnlinks" href="#hl-4-69">69</a>
+</span><span class="lnt" id="hl-4-70"><a class="lnlinks" href="#hl-4-70">70</a>
+</span><span class="lnt" id="hl-4-71"><a class="lnlinks" href="#hl-4-71">71</a>
+</span><span class="lnt" id="hl-4-72"><a class="lnlinks" href="#hl-4-72">72</a>
+</span><span class="lnt" id="hl-4-73"><a class="lnlinks" href="#hl-4-73">73</a>
+</span><span class="lnt" id="hl-4-74"><a class="lnlinks" href="#hl-4-74">74</a>
+</span><span class="lnt" id="hl-4-75"><a class="lnlinks" href="#hl-4-75">75</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">该源码版本为JDK 17
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">StringBuilder</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kd">super</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="n">str</span><span class="p">);</span><span class="w"> </span><span class="c1">// StringBuidler会调用父类的append(String)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">//我们进入父类的append(String)方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">AbstractStringBuilder</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">str</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">appendNull</span><span class="p">();</span><span class="w"> </span><span class="c1">//若字符串为空，则调用appendNull()，这回拼接&#34;null&#34;这个字符串</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str</span><span class="p">.</span><span class="na">length</span><span class="p">();</span><span class="w"> </span><span class="c1">//首先算出拼接字符串的长度</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//扩容的具体方法，count为已经拼接的字符串的长度，count + len 则是拼接后的字符串的长度，ensureCapacityInternal源码如下</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">ensureCapacityInternal</span><span class="p">(</span><span class="n">count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">len</span><span class="p">);</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">putStringAt</span><span class="p">(</span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">count</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">len</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">方法参数 minimumCapacity 是扩容的最小容量，即拼接后的字符串长度
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ensureCapacityInternal</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">minimumCapacity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// overflow-conscious code</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//计算出原来的容量，即底层字节数组的长度，coder是对Latin字符和Unicode字符的优化，下面的方法都是如此</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//coder = 0，则是Latin字符，每个字符占1个字节，数组的长度即为字符串长度</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//coder = 1，则是Unicode字符，每个字符占2个字节，数组长度右移1位，即除以2，才是字符串的长度</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">oldCapacity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="na">length</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">coder</span><span class="p">;</span><span class="w"> </span><span class="err">、</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 如果拼接后的字符串长度大于了原来的容量，则需进行扩容</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">minimumCapacity</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">oldCapacity</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//使用Arrays.copyOf()方法即可复制一份新的数组出来，该方法常被用来增长数组的长度</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">//newCapacity(minimumCapacity)则用来计算新的容量，即扩容，newCapacity源码如下</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Arrays</span><span class="p">.</span><span class="na">copyOf</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">newCapacity</span><span class="p">(</span><span class="n">minimumCapacity</span><span class="p">)</span><span class="n">则用来计算新的容量</span><span class="err">，</span><span class="n">即扩容</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">coder</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">方法参数 minCapacity 的含义同上
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="kd">private</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">newCapacity</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">minCapacity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="kt">int</span><span class="w"> </span><span class="n">oldLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="c1">// 字节数组的长度</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="kt">int</span><span class="w"> </span><span class="n">newLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minCapacity</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">coder</span><span class="p">;</span><span class="w"> </span><span class="c1">// 拼接后的字符串的长度，这里转换为了字节</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="kt">int</span><span class="w"> </span><span class="n">growth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newLength</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">oldLength</span><span class="p">;</span><span class="w"> </span><span class="c1">//需要增加的长度</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="c1">//最终的扩容实现如下行所示newLength的源码如下：</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="c1">//若Latin字符，则 2 &lt;&lt; coder 为 2Byte，即2个字符</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="c1">//若Unicode字符，则 2 &lt;&lt; coder 为 4Byte，即2个字符</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ArraysSupport</span><span class="p">.</span><span class="na">newLength</span><span class="p">(</span><span class="n">oldLength</span><span class="p">,</span><span class="w"> </span><span class="n">growth</span><span class="p">,</span><span class="w"> </span><span class="n">oldLength</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">2</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">coder</span><span class="p">));</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="c1">//这里可以看出，字节数组的长度最大为Integer.MAX_VALUE，大概为21亿</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="c1">//Latin字符串长度则为Integer.MAX_VALUE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="c1">//Unicode字符串长度则为Integer.MAX_VALUE / 2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">length</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">MAX_VALUE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">OutOfMemoryError</span><span class="p">(</span><span class="s">&#34;Required length exceeds implementation limit&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">coder</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">oldLength：原来的容量，单位为字节
+</span></span></span><span class="line"><span class="cl"><span class="cm">minGrowth：最小的增长长度，即容量扩展到刚好容纳拼接后的字符串
+</span></span></span><span class="line"><span class="cl"><span class="cm">prefGrowth：期望增长长度，值为原始长度 + 2
+</span></span></span><span class="line"><span class="cl"><span class="cm">*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">newLength</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">oldLength</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">minGrowth</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">prefGrowth</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// preconditions not checked because of inlining</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// assert oldLength &gt;= 0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// assert minGrowth &gt; 0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">//若最小增加长度 &lt; 期望增长长度，则扩容容量为：oldLength + prefGrowth = 2 * oldLength + 2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c1">// 若最小增加长度 &gt; 期望增长长度, 则扩容容量为：oldLength + prefGrowth = 拼接后的字符串长度</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">prefLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oldLength</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">max</span><span class="p">(</span><span class="n">minGrowth</span><span class="p">,</span><span class="w"> </span><span class="n">prefGrowth</span><span class="p">);</span><span class="w"> </span><span class="c1">// might overflow</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">0</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">prefLength</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">prefLength</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">SOFT_MAX_ARRAY_LENGTH</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">prefLength</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c1">// put code cold in a separate method</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hugeLength</span><span class="p">(</span><span class="n">oldLength</span><span class="p">,</span><span class="w"> </span><span class="n">minGrowth</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E5%9F%BA%E7%A1%80/">基础</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+
+
+
+
+
+
+
+
+
+<footer class="site-footer">
+    <section class="copyright">
+        &copy;
+        
+        2025 riversea
+    </section>
+
+    <section class="powerby">
+        
+
+        
+    </section>
+
+    <section class="badges">
+        
+        
+        <a href="https://github.com/riverrsea" target="_blank" rel="noopener" class="badge">
+            <img src="https://img.shields.io/badge/Github-riverrsea-blue?logo=github" alt="Github" />
+        </a>
+        
+        <a href="https://gohugo.io/" target="_blank" rel="noopener" class="badge">
+            <img src="https://img.shields.io/badge/Hugo-%e5%bf%ab%e9%80%9f%e6%9e%84%e5%bb%ba-pink?logo=hugo" alt="Hugo" />
+        </a>
+        
+        <a href="https://pages.github.com/" target="_blank" rel="noopener" class="badge">
+            <img src="https://img.shields.io/badge/%E2%80%8B-%e6%89%98%e7%ae%a1%e5%b9%b3%e5%8f%b0-pink?logo=githubpages&amp;logoSize=auto" alt="Github pages" />
+        </a>
+        
+        
+    </section>
+</footer>
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.2a16269f22bddc9518655adff62d668b9b76c1abc7e0bfe9821180b512f06285.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+        
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({ startOnLoad: true });
+        </script>
+        
+    </body>
+</html>
