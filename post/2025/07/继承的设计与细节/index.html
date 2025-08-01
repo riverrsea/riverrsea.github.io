@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='http://localhost:1313/post/2025/07/%E7%BB%A7%E6%89%BF%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E7%BB%86%E8%8A%82/'>
 
-<link rel="stylesheet" href="/scss/style.min.8e19f6311abff7d532a803b9eee144e88462d39350c1614b5c22bea730b00067.css"><meta property='og:title' content="继承">
+<link rel="stylesheet" href="/scss/style.min.b3f3640fcbf9ac1389e3acabb5489e99513d710d99b6620e51f7412f7ef85a81.css"><meta property='og:title' content="继承">
 <meta property='og:description' content="叙述Java中对于继承的设计和细节">
 <meta property='og:url' content='http://localhost:1313/post/2025/07/%E7%BB%A7%E6%89%BF%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E7%BB%86%E8%8A%82/'>
 <meta property='og:site_name' content='riversea'>
@@ -258,9 +258,20 @@ article-page
     </li>
     <li><a href="#继承会继承什么">继承会继承什么</a>
       <ol>
-        <li><a href="#构造函数">构造函数</a></li>
-        <li><a href="#成员变量">成员变量</a></li>
-        <li><a href="#虚方法">虚方法</a>
+        <li><a href="#构造函数">构造函数</a>
+          <ol>
+            <li><a href="#访问特点">访问特点</a></li>
+          </ol>
+        </li>
+        <li><a href="#成员变量">成员变量</a>
+          <ol>
+            <li><a href="#对象到底存了什么">对象到底存了什么</a></li>
+            <li><a href="#对象的空间是如何分配的">对象的空间是如何分配的</a></li>
+            <li><a href="#成员变量如何初始化的">成员变量如何初始化的</a></li>
+            <li><a href="#访问特点-1">访问特点</a></li>
+          </ol>
+        </li>
+        <li><a href="#成员方法">成员方法</a>
           <ol>
             <li><a href="#理解方法调用">理解方法调用</a>
               <ol>
@@ -268,8 +279,18 @@ article-page
                 <li><a href="#静态绑定">静态绑定</a></li>
               </ol>
             </li>
+            <li><a href="#方法重写">方法重写</a></li>
+            <li><a href="#访问特点-2">访问特点</a></li>
           </ol>
         </li>
+      </ol>
+    </li>
+    <li><a href="#this-和-super-的功能汇总">this 和 super 的功能汇总</a></li>
+    <li><a href="#多态">多态</a>
+      <ol>
+        <li><a href="#成员方法的访问">成员方法的访问</a></li>
+        <li><a href="#成员变量的访问">成员变量的访问</a></li>
+        <li><a href="#强制类型转换">强制类型转换</a></li>
       </ol>
     </li>
   </ol>
@@ -339,8 +360,8 @@ article-page
 
 
             <time class="article-time--reading">
-                阅读时长: 6 分钟，
-                字数: 2506个字
+                阅读时长: 13 分钟，
+                字数: 6192个字
 
             </time>
         </div>
@@ -444,7 +465,7 @@ article-page
         </svg>
         <span>注意</span>
     </p>
-    <p>注意，上述说明并没有提到继承的方法和字段的修饰符和访问范围，这点将在下方进行说明</p>
+    <p>注意，上述说明并没有提到继承的方法和字段的修饰符和访问权限，这点将在下方进行说明</p>
 </blockquote>
 <h2 id="什么时候使用继承"><a href="#%e4%bb%80%e4%b9%88%e6%97%b6%e5%80%99%e4%bd%bf%e7%94%a8%e7%bb%a7%e6%89%bf" class="header-anchor"></a>什么时候使用继承
 </h2><p>当类的关系满足&quot;is-a&quot;关系，即类b就是类a的关系，而且可以被抽取相同的字段或者方法出来时，即可使用继承。例如Manager类和Employee类，经理本身就是员工且Manager类和Employee类有相同的字段和方法，因此可以使用继承。</p>
@@ -512,6 +533,68 @@ classDiagram
 <li>方法名需要与类名相同</li>
 </ol>
 </blockquote>
+<h3 id="访问特点"><a href="#%e8%ae%bf%e9%97%ae%e7%89%b9%e7%82%b9" class="header-anchor"></a>访问特点
+</h3><p>虽然父类的构造方法无法继承，但是却能够访问。我们仍然以Employee类和Manager类为例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-2-1"><a class="lnlinks" href="#hl-2-1"> 1</a>
+</span><span class="lnt" id="hl-2-2"><a class="lnlinks" href="#hl-2-2"> 2</a>
+</span><span class="lnt" id="hl-2-3"><a class="lnlinks" href="#hl-2-3"> 3</a>
+</span><span class="lnt" id="hl-2-4"><a class="lnlinks" href="#hl-2-4"> 4</a>
+</span><span class="lnt" id="hl-2-5"><a class="lnlinks" href="#hl-2-5"> 5</a>
+</span><span class="lnt" id="hl-2-6"><a class="lnlinks" href="#hl-2-6"> 6</a>
+</span><span class="lnt" id="hl-2-7"><a class="lnlinks" href="#hl-2-7"> 7</a>
+</span><span class="lnt" id="hl-2-8"><a class="lnlinks" href="#hl-2-8"> 8</a>
+</span><span class="lnt" id="hl-2-9"><a class="lnlinks" href="#hl-2-9"> 9</a>
+</span><span class="lnt" id="hl-2-10"><a class="lnlinks" href="#hl-2-10">10</a>
+</span><span class="lnt" id="hl-2-11"><a class="lnlinks" href="#hl-2-11">11</a>
+</span><span class="lnt" id="hl-2-12"><a class="lnlinks" href="#hl-2-12">12</a>
+</span><span class="lnt" id="hl-2-13"><a class="lnlinks" href="#hl-2-13">13</a>
+</span><span class="lnt" id="hl-2-14"><a class="lnlinks" href="#hl-2-14">14</a>
+</span><span class="lnt" id="hl-2-15"><a class="lnlinks" href="#hl-2-15">15</a>
+</span><span class="lnt" id="hl-2-16"><a class="lnlinks" href="#hl-2-16">16</a>
+</span><span class="lnt" id="hl-2-17"><a class="lnlinks" href="#hl-2-17">17</a>
+</span><span class="lnt" id="hl-2-18"><a class="lnlinks" href="#hl-2-18">18</a>
+</span><span class="lnt" id="hl-2-19"><a class="lnlinks" href="#hl-2-19">19</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">salary</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//省略构造方法和其他方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Manager</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//Manager自身的奖金字段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="nf">Manager</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">salary</span><span class="p">,</span><span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">bonus</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第一行指代码的第一行，像这行的注释不算在其中</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="kd">super</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">salary</span><span class="p">);</span><span class="w"> </span><span class="c1">//在构造函数第一行使用super(...)可以调用父类的构造方法，</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//super() //也可以调用空参构造方法，前提是父类中存在</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="k">this</span><span class="p">.</span><span class="na">bonus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//省略其他方法方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>在构造自己之前，必须首先构造父类，因此构造方法中第一行必须使用关键字 <code>super</code> 调用父类的构造方法，若第一行缺省，虚拟机则会默认使用 <code>super()</code> 调用父类的空参构造。这意味着<code>this(...)</code> 和 <code>super(...)</code> 是冲突的，两者无法同时使用。同时，若缺省构造方法，虚拟机自动添加的构造方法也会默认使用 <code>super()</code> 调用父类的空参构造。</p>
+</blockquote>
 <h2 id="成员变量"><a href="#%e6%88%90%e5%91%98%e5%8f%98%e9%87%8f" class="header-anchor"></a>成员变量
 </h2><p>在介绍之前，有必要先简要介绍一下虚拟机的内存分布：</p>
 <ul>
@@ -525,7 +608,7 @@ classDiagram
 <li>
 <p>堆空间：用于存放对象的空间。</p>
 <ul>
-<li>当使用new关键字创建对象时，会在堆空间开辟一个对象的空间，随后对对象的字段进行初始化。并将该空间的地址返回给引用这个对象的变量。</li>
+<li>当使用new关键字创建对象时，会在堆空间开辟一个存储对象的连续空间，随后对对象的字段进行初始化。并将该空间的地址返回给引用这个对象的变量。</li>
 </ul>
 </li>
 <li>
@@ -538,6 +621,12 @@ classDiagram
 </ul>
 <p>经过上面的介绍，我们现在可以对成员变量的继承进行一个总述了：</p>
 <p>当对某一个对象进行创建时，会在堆空间开辟一个区域存放该对象，由于子类可以继承父类的所有成员变量，因此会从类继承的层次结构的顶层开始，依次对类的成员变量进行初始化，直到本类的字段初始化完成，最终形成了一个对象。对于非私有的变量，允许访问，但对于私有的变量，则无法进行访问，尽管其仍被分配了空间。</p>
+<h3 id="对象到底存了什么"><a href="#%e5%af%b9%e8%b1%a1%e5%88%b0%e5%ba%95%e5%ad%98%e4%ba%86%e4%bb%80%e4%b9%88" class="header-anchor"></a>对象到底存了什么
+</h3><ul>
+<li><strong>不是代码，也不是方法</strong>：对象本身不存储它所属类的代码（方法）——代码存在别的地方（方法区/元空间）。</li>
+<li><strong>核心是“状态数据”</strong>：这块连续内存里存放的<strong>最主要、最核心</strong>的东西，就是这个对象<strong>当前的状态</strong>，也就是它的所有<strong>成员变量的值</strong>。</li>
+<li><strong>包括“祖传家当”</strong>：这些家当不仅仅是你在这个对象自己的类里定义的变量，还包括它从<strong>祖宗十八代</strong>（继承链上的所有父类）那里<strong>继承</strong>下来的所有非静态成员变量，包括私有和非私有成员变量。从最顶级的祖先 <code>java.lang.Object</code> 开始，到它的直接父类、间接父类，一直到它自己这一代定义的变量，一个都不会少。</li>
+</ul>
 
 
 
@@ -553,14 +642,128 @@ classDiagram
         </svg>
         <span>重要</span>
     </p>
-    <p>对于没有继承任何类的类，虚拟机最终会让他继承Object类，所有类都派生于Object类，即Object类是所有类的父类。</p>
+    <p>对于没有继承任何类的类，虚拟机最终会让他继承 <code>java.lang.Object</code> 类，所有类都派生于 <code>java.lang.Object</code> 类，<code>java.lang.Object</code> 类是所有类的父类。</p>
 </blockquote>
-<h2 id="虚方法"><a href="#%e8%99%9a%e6%96%b9%e6%b3%95" class="header-anchor"></a>虚方法
+<h3 id="对象的空间是如何分配的"><a href="#%e5%af%b9%e8%b1%a1%e7%9a%84%e7%a9%ba%e9%97%b4%e6%98%af%e5%a6%82%e4%bd%95%e5%88%86%e9%85%8d%e7%9a%84" class="header-anchor"></a>对象的空间是如何分配的
+</h3><p>尽管内存空间是连续分配的，但每个继承链上的类都占有自己的<strong>逻辑分区</strong>。每个分区上的成员变量互不干扰。</p>
+<ul>
+<li><strong>Object分区</strong>：属于 <code>java.lang.Object</code>。这里存放Object类内置的一些必要信息（对象头，包含类信息指针、GC标记、锁状态等，虽然你看不到，但很重要），以及Object类可能定义的非静态成员变量（很少）。</li>
+<li><strong>父类A的分区</strong>：在Object分区之后，分配直接继承于它的子类的分区。这块区域存放<strong>父类A</strong>自己定义的所有非静态成员变量。</li>
+<li><strong>父类B分区 (如果有)</strong>：如果父类A还有子类（父类B），那么在父类A分区，再分配<strong>父类B</strong>，存放父类B的成员变量。以此类推，从继承链自上往下依次分配。</li>
+<li><strong>本类分区</strong>：最后，在所有分区的最后面，分配属于<strong>这个对象自己所属类的分区</strong>。这块区域存放<strong>你自己在这个类里定义</strong>的所有非静态成员变量。</li>
+</ul>
+
+
+
+
+<blockquote class="alert-blockquote alert-caution">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0
+    1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0
+    11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1
+    .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>危险</span>
+    </p>
+    <p>上面叙述的分区，只是逻辑上的，并没有真实存在于物理内存中，只是为了让你理解堆空间的情况。实际上在堆空间中，从顶层的Object类开始沿着继承链向下，依次连续放置着每个类自己的的成员变量，中间没有任何象征着分区结束的标志或者空隙。而实际上，在最后会分配一个连续的内存空间，该空间没有意义，仅仅为了保证对象所占用的空间是8的倍数。</p>
+</blockquote>
+<h3 id="成员变量如何初始化的"><a href="#%e6%88%90%e5%91%98%e5%8f%98%e9%87%8f%e5%a6%82%e4%bd%95%e5%88%9d%e5%a7%8b%e5%8c%96%e7%9a%84" class="header-anchor"></a>成员变量如何初始化的
+</h3><p>由<a class="link" href="#%e8%ae%bf%e9%97%ae%e7%89%b9%e7%82%b9" >这一节</a>的叙述可知，在构造本对象时，首先会构造父类的对象。因此我们可以很清楚地得出一个结论，成员变量会如下进行初始化：</p>
+<p>首先从Object类开始进行成员变量的初始化，随后从上往下沿着继承链，对每个类的成员变量进行初始化，直到本类。</p>
+<h3 id="访问特点-1"><a href="#%e8%ae%bf%e9%97%ae%e7%89%b9%e7%82%b9-1" class="header-anchor"></a>访问特点
+</h3><p>可以有三种使用方法对对象的成员变量进行访问，仍然以Employee类与Manager类为例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-3-1"><a class="lnlinks" href="#hl-3-1"> 1</a>
+</span><span class="lnt" id="hl-3-2"><a class="lnlinks" href="#hl-3-2"> 2</a>
+</span><span class="lnt" id="hl-3-3"><a class="lnlinks" href="#hl-3-3"> 3</a>
+</span><span class="lnt" id="hl-3-4"><a class="lnlinks" href="#hl-3-4"> 4</a>
+</span><span class="lnt" id="hl-3-5"><a class="lnlinks" href="#hl-3-5"> 5</a>
+</span><span class="lnt" id="hl-3-6"><a class="lnlinks" href="#hl-3-6"> 6</a>
+</span><span class="lnt" id="hl-3-7"><a class="lnlinks" href="#hl-3-7"> 7</a>
+</span><span class="lnt" id="hl-3-8"><a class="lnlinks" href="#hl-3-8"> 8</a>
+</span><span class="lnt" id="hl-3-9"><a class="lnlinks" href="#hl-3-9"> 9</a>
+</span><span class="lnt" id="hl-3-10"><a class="lnlinks" href="#hl-3-10">10</a>
+</span><span class="lnt" id="hl-3-11"><a class="lnlinks" href="#hl-3-11">11</a>
+</span><span class="lnt" id="hl-3-12"><a class="lnlinks" href="#hl-3-12">12</a>
+</span><span class="lnt" id="hl-3-13"><a class="lnlinks" href="#hl-3-13">13</a>
+</span><span class="lnt" id="hl-3-14"><a class="lnlinks" href="#hl-3-14">14</a>
+</span><span class="lnt" id="hl-3-15"><a class="lnlinks" href="#hl-3-15">15</a>
+</span><span class="lnt" id="hl-3-16"><a class="lnlinks" href="#hl-3-16">16</a>
+</span><span class="lnt" id="hl-3-17"><a class="lnlinks" href="#hl-3-17">17</a>
+</span><span class="lnt" id="hl-3-18"><a class="lnlinks" href="#hl-3-18">18</a>
+</span><span class="lnt" id="hl-3-19"><a class="lnlinks" href="#hl-3-19">19</a>
+</span><span class="lnt" id="hl-3-20"><a class="lnlinks" href="#hl-3-20">20</a>
+</span><span class="lnt" id="hl-3-21"><a class="lnlinks" href="#hl-3-21">21</a>
+</span><span class="lnt" id="hl-3-22"><a class="lnlinks" href="#hl-3-22">22</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//注意这里没有使用private，因为私有变量无法从子类中访问，但使用public破坏了封装性</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">salary</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//省略构造方法和其他方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Manager</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//Manager自身的奖金字段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//省略构造方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">getSalary</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第一种：这种会从局部变量开始，从本类的成员变量开始，沿着继承链向上寻找，这种方式会受到局部变量的阴影</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第二种：会直接从从本类的成员变量开始，沿着继承链向上寻找</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">salary</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第三种：使用super关键字直接说明从父类的成员变量开始寻找</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">salary</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p><code>this</code> 指向调用方法的隐参，相当于指向自身对象，其本身相当于是一个成员方法里的局部变量，由虚拟机自动赋值。值得注意的是，静态方法无法使用 <code>this</code></p>
+<p><code>super</code> 是一个关键字，没有指向任何对象，其作用只是指示虚拟机去父类中寻找成员变量</p>
+</blockquote>
+<h2 id="成员方法"><a href="#%e6%88%90%e5%91%98%e6%96%b9%e6%b3%95" class="header-anchor"></a>成员方法
 </h2><p>我们把没有被final、static、private修饰的方法成为<strong>虚方法</strong>。只有虚方法才能被继承。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-important">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25
+    13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0
+    .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0
+    0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+        </svg>
+        <span>重要</span>
+    </p>
+    <p>实际上，被final修饰的方法也会进入虚方法表，并被继承，但本身不允许<a class="link" href="#%e6%96%b9%e6%b3%95%e9%87%8d%e5%86%99" >重写</a></p>
+</blockquote>
 <h3 id="理解方法调用"><a href="#%e7%90%86%e8%a7%a3%e6%96%b9%e6%b3%95%e8%b0%83%e7%94%a8" class="header-anchor"></a>理解方法调用
-</h3><p>所有类的成员方法并不会存储到<strong>堆空间</strong>中，而是存放在<strong>方法区</strong>中，以字节码的形式存储。每个类的字节码文件会存放着该类的<strong>虚方法表</strong>，该表记录着所有可以被继承的方法，即<strong>虚方法</strong>。当使用一个类时，其字节码会被加载到方法区中，同时会沿着继承链把其父类的字节码文件加载进方法区中，这个过程会一直到最顶层的Object类。当类被加载后，虚拟机会为该类计算出一份虚方法表，父类的虚方法表会移交给子类，子类会基于父类的虚方法表并添加上自己的虚方法生成一份自己的，并移交给自己的子类。这样，处于继承层次结构底层的类就会有一份包含父类的<strong>虚方法</strong>以及自己的<strong>虚方法</strong>的虚方法表。</p>
+</h3><p>所有类的成员方法并不会存储到<strong>堆空间</strong>中，而是存放在<strong>方法区</strong>中，以字节码的形式存储。每个类的字节码文件会存放着该类的<strong>虚方法表</strong>，该表记录着所有可以被继承的方法，即<strong>虚方法</strong>。当使用一个类时，其字节码会被加载到方法区中，同时会沿着继承链把其父类的字节码文件加载进方法区中，这个过程会一直到最顶层的Object类，父类总是先于子类被放入方法区。当类被加载后，虚拟机会为该类计算出一份虚方法表，父类的虚方法表会移交给子类，子类会基于父类的虚方法表并添加上自己的虚方法生成一份自己的，并移交给自己的子类。这样，处于继承层次结构底层的类就会有一份包含父类的<strong>虚方法</strong>以及自己的<strong>虚方法</strong>的虚方法表。</p>
 <h4 id="动态绑定"><a href="#%e5%8a%a8%e6%80%81%e7%bb%91%e5%ae%9a" class="header-anchor"></a>动态绑定
-</h4><p>当一个类调用一个虚方法时，虚拟机就会去访问这个类型的方法表，例如<a class="link" href="#%e4%bb%80%e4%b9%88%e6%98%af%e7%bb%a7%e6%89%bf" >第一节</a>中给的例子，第29行中调用的 <code>raiseSalary()</code> 方法，虚拟机准确的找到了调用者的类型为Manager，于是去访问他的虚方法表，Manager类型继承了Employee类型的虚方法表，里面就有 <code>raiseSalary()</code>  方法，因此可以访问。这个过程称为<strong>动态绑定</strong></p>
+</h4><p>当程序运行时才知道调用的具体方法。当一个类调用一个虚方法时，虚拟机就会去访问这个类型的方法表，例如<a class="link" href="#%e4%bb%80%e4%b9%88%e6%98%af%e7%bb%a7%e6%89%bf" >第一节</a>中给的例子，第29行中调用的 <code>raiseSalary()</code> 方法，虚拟机准确的找到了调用者的类型为Manager，于是去访问他的虚方法表，Manager类型继承了Employee类型的虚方法表，里面就有 <code>raiseSalary()</code>  方法，因此可以访问。这个过程称为<strong>动态绑定</strong></p>
 <h4 id="静态绑定"><a href="#%e9%9d%99%e6%80%81%e7%bb%91%e5%ae%9a" class="header-anchor"></a>静态绑定
 </h4><p>对于非虚方法以及构造方法，虚拟机准确的知道该调用哪些方法，会在编译时就准确的绑定了，不会在运行时绑定，这个过程成为<strong>静态绑定</strong>。</p>
 
@@ -577,9 +780,323 @@ classDiagram
         </svg>
         <span>警告</span>
     </p>
-    <p>长期以来的一个误解，对于一个方法，虚拟机会依次沿着继承链向上寻找这个方法。这个过程其实是错误的，或者是片面的，因为只有构造方法才会沿着继承链向上依次调用构造方法。</p>
+    <p>长久以来的一个误解，对于一个方法，虚拟机会依次沿着继承链向上寻找这个方法。这个过程其实是错误的，或者是片面的，因为只有构造方法才会沿着继承链向上依次调用构造方法。</p>
+</blockquote>
+<h3 id="方法重写"><a href="#%e6%96%b9%e6%b3%95%e9%87%8d%e5%86%99" class="header-anchor"></a>方法重写
+</h3><p>子类可以对<strong>成员方法</strong>进行重写，即重写一份自己的方法实现，但这仍然需要满足一定的要求，要求如下：</p>
+<ul>
+<li>
+<p>方法签名必须一致。方法签名包括：方法名以及形参类型列表。</p>
+</li>
+<li>
+<p>成员变量必须是可以继承的，即如上所述的<strong>虚方法</strong></p>
+</li>
+<li>
+<p>重写的方法的访问权限不小于父类的方法。访问权限的范围满足：<code>public &gt; protected &gt; 缺省 &gt; private</code></p>
+</li>
+<li>
+<p>返回类型的范围小于等于父类的方法。</p>
+</li>
+</ul>
+<p>重写相当于改写了自己的方法表，这会对本类中的方法表中的被重写的方法进行替换。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-tip">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984
+    2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0
+    1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766
+    2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328
+    3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0
+    1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304
+    0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1
+    .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z" />
+        </svg>
+        <span>建议</span>
+    </p>
+    <p>建议对重写的方法加上 <code>@Override</code> 注解，这会提醒虚拟机这是一个重写的方法，从而检查语法是否出错。</p>
 </blockquote>
 
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>上述第四点的返回类型的范围为广义上的范围，即表示的范围。比如，子类表示的事物比父类更具体，因此父类所表示的范围大于子类，就像Employee类能表示广大职工，而Manager类只能表示经理。</p>
+</blockquote>
+<h3 id="访问特点-2"><a href="#%e8%ae%bf%e9%97%ae%e7%89%b9%e7%82%b9-2" class="header-anchor"></a>访问特点
+</h3><p>仍然可以使用三种方式访问对象的成员方法，仍然以Employee类与Manager类为例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-4-1"><a class="lnlinks" href="#hl-4-1"> 1</a>
+</span><span class="lnt" id="hl-4-2"><a class="lnlinks" href="#hl-4-2"> 2</a>
+</span><span class="lnt" id="hl-4-3"><a class="lnlinks" href="#hl-4-3"> 3</a>
+</span><span class="lnt" id="hl-4-4"><a class="lnlinks" href="#hl-4-4"> 4</a>
+</span><span class="lnt" id="hl-4-5"><a class="lnlinks" href="#hl-4-5"> 5</a>
+</span><span class="lnt" id="hl-4-6"><a class="lnlinks" href="#hl-4-6"> 6</a>
+</span><span class="lnt" id="hl-4-7"><a class="lnlinks" href="#hl-4-7"> 7</a>
+</span><span class="lnt" id="hl-4-8"><a class="lnlinks" href="#hl-4-8"> 8</a>
+</span><span class="lnt" id="hl-4-9"><a class="lnlinks" href="#hl-4-9"> 9</a>
+</span><span class="lnt" id="hl-4-10"><a class="lnlinks" href="#hl-4-10">10</a>
+</span><span class="lnt" id="hl-4-11"><a class="lnlinks" href="#hl-4-11">11</a>
+</span><span class="lnt" id="hl-4-12"><a class="lnlinks" href="#hl-4-12">12</a>
+</span><span class="lnt" id="hl-4-13"><a class="lnlinks" href="#hl-4-13">13</a>
+</span><span class="lnt" id="hl-4-14"><a class="lnlinks" href="#hl-4-14">14</a>
+</span><span class="lnt" id="hl-4-15"><a class="lnlinks" href="#hl-4-15">15</a>
+</span><span class="lnt" id="hl-4-16"><a class="lnlinks" href="#hl-4-16">16</a>
+</span><span class="lnt" id="hl-4-17"><a class="lnlinks" href="#hl-4-17">17</a>
+</span><span class="lnt" id="hl-4-18"><a class="lnlinks" href="#hl-4-18">18</a>
+</span><span class="lnt" id="hl-4-19"><a class="lnlinks" href="#hl-4-19">19</a>
+</span><span class="lnt" id="hl-4-20"><a class="lnlinks" href="#hl-4-20">20</a>
+</span><span class="lnt" id="hl-4-21"><a class="lnlinks" href="#hl-4-21">21</a>
+</span><span class="lnt" id="hl-4-22"><a class="lnlinks" href="#hl-4-22">22</a>
+</span><span class="lnt" id="hl-4-23"><a class="lnlinks" href="#hl-4-23">23</a>
+</span><span class="lnt" id="hl-4-24"><a class="lnlinks" href="#hl-4-24">24</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//注意这里没有使用private，因为私有变量无法从子类中访问，但使用public破坏了封装性</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">salary</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">getSalary</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   	</span><span class="k">return</span><span class="w"> </span><span class="n">salary</span><span class="w">   
+</span></span></span><span class="line"><span class="cl"><span class="w">  	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Manager</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//Manager自身的奖金字段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//省略构造方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">getSalary</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第一种：这种会去访问本类的方法表进行查找。但这种情况下是错误的，因为我们重写了getSalary()，其替换了方法表中的父类的成员方法吗，因此这种会无限的调用自生，直至栈溢出程序停止。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getSalary</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c1">//第二种：这种相当于this.getSlary()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">getSalary</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第三种：使用super指示虚拟机从父类的方法表中进行寻找。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">getSalary</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>还记得上面叙述的动态绑定和静态绑定吗，实际上只针对<strong>虚方法</strong>，因为非虚方法，早已在编译阶段就已经确定了调用的方法。</p>
+</blockquote>
+<h1 id="this-和-super-的功能汇总"><a href="#this-%e5%92%8c-super-%e7%9a%84%e5%8a%9f%e8%83%bd%e6%b1%87%e6%80%bb" class="header-anchor"></a>this 和 super 的功能汇总
+</h1><p><code>this</code> ：真真切切的局部变量，指向调用者自身。</p>
+<p><code>super</code> ：是一个关键字，指示虚拟机去访问父类的成员。</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>关键字</th>
+          <th>访问成员变量</th>
+          <th>访问成员方法</th>
+          <th>访问构造犯法</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>this</td>
+          <td>this.成员变量<br />访问该类成员变量</td>
+          <td>this.成员方法<br />访问该类成员方法</td>
+          <td>this(&hellip;)<br />访问该类的构造函数</td>
+      </tr>
+      <tr>
+          <td>super</td>
+          <td>super.成员变量<br />访问父类的成员变量</td>
+          <td>super.成员方法<br />访问父类的成员方法</td>
+          <td>super(&hellip;)<br />访问父类的构造函数</td>
+      </tr>
+  </tbody>
+</table></div>
+<h1 id="多态"><a href="#%e5%a4%9a%e6%80%81" class="header-anchor"></a>多态
+</h1><p>多态即为多种状态，这是面向对象三种特征的其一。父类在运行时不仅能表现为当前类的状态，还能表示子类的状态，即子类的对象可以赋值给父类进行引用，我们仍然使用Employee类和Manager类举例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-5-1"><a class="lnlinks" href="#hl-5-1"> 1</a>
+</span><span class="lnt" id="hl-5-2"><a class="lnlinks" href="#hl-5-2"> 2</a>
+</span><span class="lnt" id="hl-5-3"><a class="lnlinks" href="#hl-5-3"> 3</a>
+</span><span class="lnt" id="hl-5-4"><a class="lnlinks" href="#hl-5-4"> 4</a>
+</span><span class="lnt" id="hl-5-5"><a class="lnlinks" href="#hl-5-5"> 5</a>
+</span><span class="lnt" id="hl-5-6"><a class="lnlinks" href="#hl-5-6"> 6</a>
+</span><span class="lnt" id="hl-5-7"><a class="lnlinks" href="#hl-5-7"> 7</a>
+</span><span class="lnt" id="hl-5-8"><a class="lnlinks" href="#hl-5-8"> 8</a>
+</span><span class="lnt" id="hl-5-9"><a class="lnlinks" href="#hl-5-9"> 9</a>
+</span><span class="lnt" id="hl-5-10"><a class="lnlinks" href="#hl-5-10">10</a>
+</span><span class="lnt" id="hl-5-11"><a class="lnlinks" href="#hl-5-11">11</a>
+</span><span class="lnt" id="hl-5-12"><a class="lnlinks" href="#hl-5-12">12</a>
+</span><span class="lnt" id="hl-5-13"><a class="lnlinks" href="#hl-5-13">13</a>
+</span><span class="lnt" id="hl-5-14"><a class="lnlinks" href="#hl-5-14">14</a>
+</span><span class="lnt" id="hl-5-15"><a class="lnlinks" href="#hl-5-15">15</a>
+</span><span class="lnt" id="hl-5-16"><a class="lnlinks" href="#hl-5-16">16</a>
+</span><span class="lnt" id="hl-5-17"><a class="lnlinks" href="#hl-5-17">17</a>
+</span><span class="lnt" id="hl-5-18"><a class="lnlinks" href="#hl-5-18">18</a>
+</span><span class="lnt" id="hl-5-19"><a class="lnlinks" href="#hl-5-19">19</a>
+</span><span class="lnt" id="hl-5-20"><a class="lnlinks" href="#hl-5-20">20</a>
+</span><span class="lnt" id="hl-5-21"><a class="lnlinks" href="#hl-5-21">21</a>
+</span><span class="lnt" id="hl-5-22"><a class="lnlinks" href="#hl-5-22">22</a>
+</span><span class="lnt" id="hl-5-23"><a class="lnlinks" href="#hl-5-23">23</a>
+</span><span class="lnt" id="hl-5-24"><a class="lnlinks" href="#hl-5-24">24</a>
+</span><span class="lnt" id="hl-5-25"><a class="lnlinks" href="#hl-5-25">25</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">salary</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//这里省略其他方法和字段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">raiseSalary</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">byPercent</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="kt">double</span><span class="w"> </span><span class="n">raise</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">byPercent</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">100</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">salary</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">raise</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">Employee</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Manager</span><span class="p">(...);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">e</span><span class="p">.</span><span class="na">raiseSalary</span><span class="p">(...);</span><span class="w"> </span><span class="c1">//不会报错，成功执行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">e</span><span class="p">.</span><span class="na">setBonus</span><span class="p">(...);</span><span class="w"> </span><span class="c1">//报错了</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">class</span> <span class="nc">Manager</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Employee</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setBonus</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">bonus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//这里省略其他方法和字段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>值得注意的是，<code>is a</code> 原则描述的是一个替换原则，当两个类型满足 <code>is a</code> 原则时就能使用多态。比如 <code>Manager[]</code> 他是 <code>Employee[]</code> ，因此 <code>Emplpoyee[] array = new Manager[]{}</code> 是合法的</p>
+</blockquote>
+<h2 id="成员方法的访问"><a href="#%e6%88%90%e5%91%98%e6%96%b9%e6%b3%95%e7%9a%84%e8%ae%bf%e9%97%ae" class="header-anchor"></a>成员方法的访问
+</h2><p>对于成员方法，编译期间会查看对象类型的成员方法是否存在或者能否访问；运行期间会查找实际类型的方法表，进而访问实际类型的具体方法。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-note">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1
+    7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8
+    6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+        </svg>
+        <span>注意</span>
+    </p>
+    <p>值得注意的是，对象的类型是其声明的类型，实际类型是真实的对象的类型。比如<a class="link" href="#%e5%a4%9a%e6%80%81" >上述代码</a>第12行，对象e的类型为 <code>Employee</code>，但其实际类型为 <code>Manager</code></p>
+</blockquote>
+<h2 id="成员变量的访问"><a href="#%e6%88%90%e5%91%98%e5%8f%98%e9%87%8f%e7%9a%84%e8%ae%bf%e9%97%ae" class="header-anchor"></a>成员变量的访问
+</h2><p>对于成员变量，编译期间会查看对象类型的成员变量是否存在或者能否访问；我们知道对象的存储空间，连续存放着父类与自己的成员变量，因此运行期间虚拟机会直接去实际类型的空间里直接寻找属于该对象类型的指定变量。</p>
+<h2 id="强制类型转换"><a href="#%e5%bc%ba%e5%88%b6%e7%b1%bb%e5%9e%8b%e8%bd%ac%e6%8d%a2" class="header-anchor"></a>强制类型转换
+</h2><p>当使用多态时，在编译期间会依据对象的类型判断调用是否合法，那么当我们要使用子类独有的方法或者变量时，如何才能访问成功呢。对于基本数据类型来说，可以使用强制类型转换将一个范围较大的类型转换为另一个范围较小类型。对于对象来说，其实也可以而且方法相同。同样以<a class="link" href="#%e5%a4%9a%e6%80%81" >上述代码</a>为例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-6-1"><a class="lnlinks" href="#hl-6-1">1</a>
+</span><span class="lnt" id="hl-6-2"><a class="lnlinks" href="#hl-6-2">2</a>
+</span><span class="lnt" id="hl-6-3"><a class="lnlinks" href="#hl-6-3">3</a>
+</span><span class="lnt" id="hl-6-4"><a class="lnlinks" href="#hl-6-4">4</a>
+</span><span class="lnt" id="hl-6-5"><a class="lnlinks" href="#hl-6-5">5</a>
+</span><span class="lnt" id="hl-6-6"><a class="lnlinks" href="#hl-6-6">6</a>
+</span><span class="lnt" id="hl-6-7"><a class="lnlinks" href="#hl-6-7">7</a>
+</span><span class="lnt" id="hl-6-8"><a class="lnlinks" href="#hl-6-8">8</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//省略类和其他方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="n">Employee</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Manager</span><span class="p">(...);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="n">e</span><span class="p">.</span><span class="na">raiseSalary</span><span class="p">(...);</span><span class="w"> </span><span class="c1">//不会报错，成功执行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">// e.setBonus(...); //报错了</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="n">Manager</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Manager</span><span class="p">)</span><span class="n">e</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="n">m</span><span class="p">.</span><span class="na">setBonus</span><span class="p">(...)</span><span class="w"> </span><span class="c1">//太对了哥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>但对于一个对象来说，若转换的类型不对，那么将会产生 <code>ClassCastException</code> 对象转换的编译错误，那么如何保证这个错误不会发生了，我们可以使用 <code>instanceof</code> 操作符，这个操作符顾名思义判断某个对象是否是某个类的实例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-7-1"><a class="lnlinks" href="#hl-7-1"> 1</a>
+</span><span class="lnt" id="hl-7-2"><a class="lnlinks" href="#hl-7-2"> 2</a>
+</span><span class="lnt" id="hl-7-3"><a class="lnlinks" href="#hl-7-3"> 3</a>
+</span><span class="lnt" id="hl-7-4"><a class="lnlinks" href="#hl-7-4"> 4</a>
+</span><span class="lnt" id="hl-7-5"><a class="lnlinks" href="#hl-7-5"> 5</a>
+</span><span class="lnt" id="hl-7-6"><a class="lnlinks" href="#hl-7-6"> 6</a>
+</span><span class="lnt" id="hl-7-7"><a class="lnlinks" href="#hl-7-7"> 7</a>
+</span><span class="lnt" id="hl-7-8"><a class="lnlinks" href="#hl-7-8"> 8</a>
+</span><span class="lnt" id="hl-7-9"><a class="lnlinks" href="#hl-7-9"> 9</a>
+</span><span class="lnt" id="hl-7-10"><a class="lnlinks" href="#hl-7-10">10</a>
+</span><span class="lnt" id="hl-7-11"><a class="lnlinks" href="#hl-7-11">11</a>
+</span><span class="lnt" id="hl-7-12"><a class="lnlinks" href="#hl-7-12">12</a>
+</span><span class="lnt" id="hl-7-13"><a class="lnlinks" href="#hl-7-13">13</a>
+</span><span class="lnt" id="hl-7-14"><a class="lnlinks" href="#hl-7-14">14</a>
+</span><span class="lnt" id="hl-7-15"><a class="lnlinks" href="#hl-7-15">15</a>
+</span><span class="lnt" id="hl-7-16"><a class="lnlinks" href="#hl-7-16">16</a>
+</span><span class="lnt" id="hl-7-17"><a class="lnlinks" href="#hl-7-17">17</a>
+</span><span class="lnt" id="hl-7-18"><a class="lnlinks" href="#hl-7-18">18</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">//省略类和其他方法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="n">Employee</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Manager</span><span class="p">(...);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="n">e</span><span class="p">.</span><span class="na">raiseSalary</span><span class="p">(...);</span><span class="w"> </span><span class="c1">//不会报错，成功执行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">// e.setBonus(...); //报错了</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//这里判断对象e是否是Manager的实例</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//如果是则执行代码，否则就跳过，避免了错误的产生</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="k">if</span><span class="p">(</span><span class="n">e</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">Manager</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">Manager</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Manager</span><span class="p">)</span><span class="n">e</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">m</span><span class="p">.</span><span class="na">setBonus</span><span class="p">(...)</span><span class="w"> </span><span class="c1">//太对了哥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//或者如果你使用的是JDK 17，你可以使用下面的语法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//当e雀氏是Manager得实例时，将会自动强转e赋值给m，替换了如上9行的代码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//其实没必要让Manager出现三次对吧</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="k">if</span><span class="p">(</span><span class="n">e</span><span class="w"> </span><span class="k">instanceof</span><span class="w"> </span><span class="n">Manager</span><span class="w"> </span><span class="n">m</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">m</span><span class="p">.</span><span class="na">setBonus</span><span class="p">(...);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
 </section>
 
 
@@ -620,6 +1137,19 @@ classDiagram
 </article>
 
             
+                
+<article class="">
+    <a href="/post/2025/07/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E7%AE%80%E8%BF%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">字符编码简述</h2>
+        </div>
+    </a>
+</article>
+
+            
         </div>
     </div>
 </aside>
@@ -630,31 +1160,118 @@ classDiagram
 
 
 <footer class="site-footer">
-    <section class="copyright">
-        &copy;
-        
-        2025 riversea
+    <section class="detail">
+        <section class="copyright">
+            &copy;
+            
+            2025 riversea
+        </section>
+        <section class="custome-text">
+            
+            爱像一阵风 <br />
+            
+        </section>
     </section>
+    
 
-    <section class="powerby">
+    
+    
+<section id="uptime-counter" data-start="1753315200">
+    <div class="uptime-container">
+        <span id="uptime-text">✨ 小破站已运行 </span>
+        <span id="uptime-days">8</span>
+        <span class="uptime-unit">天</span>
+        <span id="uptime-hours">11</span>
+        <span class="time-separator">:</span>
+        <span id="uptime-mins">21</span>
+        <span class="time-separator">:</span>
+        <span id="uptime-secs">02</span>
+        <span class="emoji-pair">🚀</span>
+    </div>
+</section>
+
+<script>
+    (function () {
+        const startTime = parseInt(document.querySelector('#uptime-counter').dataset.start);
+        const daysEl = document.getElementById('uptime-days');
+        const hoursEl = document.getElementById('uptime-hours');
+        const minsEl = document.getElementById('uptime-mins');
+        const secsEl = document.getElementById('uptime-secs');
+        const textEl = document.getElementById('uptime-text');
+        const emojiEl = document.querySelector('.emoji-pair');
+
         
+        const funTexts = [
+            "✨ 这个小破站已经顽强存活了",
+            "🚀 惊人！本网站已持续运行",
+            "🌈 不可思议，已稳定工作",
+            "🔥 第",
+            "💻 它竟然坚持了",
+            "🛠️ 从建站至今已走过",
+            "⏳ 时光飞逝，已运行",
+            "🌐 这个网站奇迹般地存活了",
+            "📅 记录保持：",
+            "🖥️ 服务器已持续工作",
+            "🎉 庆祝运行时长：",
+            "⚡ 闪电般持续了",
+            "🔮 魔法数字：",
+            "🏆 破纪录运行",
+            "🔄 不间断运行时长：",
+            "🌙 日夜兼程已",
+            "☀️ 日出日落见证了",
+            "📊 统计显示已运行",
+            "🤖 机器人开心地报告：已工作",
+            "👾 外星科技维持了"
+        ];
 
         
-    </section>
+        const emojiPairs = [
+            "🚀🚀🚀", "✨✨✨", "🌈⚡🌟", "🔥🔥🔥",
+            "💻🖥️⌨️", "⏳⏳⏳", "🌐🌍🌎", "🎉🎊🎈",
+            "⚡🌟💫", "🔮✨🎩", "🏆🥇🎖️", "🔄🔄🔄",
+            "🌙☀️⭐", "📊📈📉", "🤖👾🦾", "🍵☕🧃"
+        ];
 
+        
+        function getRandomIndex(array) {
+            return Math.floor(Math.random() * array.length);
+        }
+
+        
+        textEl.textContent = funTexts[getRandomIndex(funTexts)] + ' ';
+        emojiEl.textContent = emojiPairs[getRandomIndex(emojiPairs)];
+
+        function update() {
+            const diff = Math.floor(Date.now() / 1000 - startTime);
+            const days = Math.floor(diff / 86400);
+            const hours = Math.floor((diff % 86400) / 3600);
+            const minutes = Math.floor((diff % 3600) / 60);
+            const seconds = diff % 60;
+
+            
+            daysEl.textContent = days;
+            hoursEl.textContent = hours.toString().padStart(2, '0');
+            minsEl.textContent = minutes.toString().padStart(2, '0');
+            secsEl.textContent = seconds.toString().padStart(2, '0');
+        }
+
+        update();
+        setInterval(update, 1000);
+    })();
+</script>
     <section class="badges">
         
         
         <a href="https://github.com/riverrsea" target="_blank" rel="noopener" class="badge">
-            <img src="https://img.shields.io/badge/Github-riverrsea-blue?logo=github" alt="Github" />
+            <img src="https://img.shields.io/badge/Github-riverrsea-3F9142?logo=github&amp;labelColor=181717" alt="Github" />
         </a>
         
         <a href="https://gohugo.io/" target="_blank" rel="noopener" class="badge">
-            <img src="https://img.shields.io/badge/Hugo-%e5%bf%ab%e9%80%9f%e6%9e%84%e5%bb%ba-pink?logo=hugo" alt="Hugo" />
+            <img src="https://img.shields.io/badge/Hugo-%e5%bf%ab%e9%80%9f%e6%9e%84%e5%bb%ba-007EC6?style=flat&amp;logo=hugo&amp;logoColor=white&amp;labelColor=FF4081" alt="Hugo" />
         </a>
         
         <a href="https://pages.github.com/" target="_blank" rel="noopener" class="badge">
-            <img src="https://img.shields.io/badge/%E2%80%8B-%e6%89%98%e7%ae%a1%e5%b9%b3%e5%8f%b0-pink?logo=githubpages&amp;logoSize=auto" alt="Github pages" />
+            <img src="https://img.shields.io/badge/%E2%80%8B-%e6%89%98%e7%ae%a1%e5%b9%b3%e5%8f%b0-F7DF1E?logo=githubpages&amp;logoSize=auto&amp;labelColor=222222" alt="Github pages" />
         </a>
         
         

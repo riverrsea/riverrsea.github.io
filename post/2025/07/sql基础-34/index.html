@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="对长久依赖困扰自己的字符集问题的一个解答">
-<title>字符编码简述</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="sql基础50题-34题的题解和感悟">
+<title>34-最后一个能进入巴士的人</title>
 
-<link rel='canonical' href='http://localhost:1313/post/2025/07/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E7%AE%80%E8%BF%B0/'>
+<link rel='canonical' href='http://localhost:1313/post/2025/07/sql%E5%9F%BA%E7%A1%80-34/'>
 
-<link rel="stylesheet" href="/scss/style.min.b3f3640fcbf9ac1389e3acabb5489e99513d710d99b6620e51f7412f7ef85a81.css"><meta property='og:title' content="字符编码简述">
-<meta property='og:description' content="对长久依赖困扰自己的字符集问题的一个解答">
-<meta property='og:url' content='http://localhost:1313/post/2025/07/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E7%AE%80%E8%BF%B0/'>
+<link rel="stylesheet" href="/scss/style.min.b3f3640fcbf9ac1389e3acabb5489e99513d710d99b6620e51f7412f7ef85a81.css"><meta property='og:title' content="34-最后一个能进入巴士的人">
+<meta property='og:description' content="sql基础50题-34题的题解和感悟">
+<meta property='og:url' content='http://localhost:1313/post/2025/07/sql%E5%9F%BA%E7%A1%80-34/'>
 <meta property='og:site_name' content='riversea'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='基础' /><meta property='article:published_time' content='2025-07-24T13:31:53&#43;08:00'/><meta property='article:modified_time' content='2025-07-24T13:31:53&#43;08:00'/>
-<meta name="twitter:title" content="字符编码简述">
-<meta name="twitter:description" content="对长久依赖困扰自己的字符集问题的一个解答">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='sql基础50题' /><meta property='article:published_time' content='2025-07-30T11:17:43&#43;08:00'/><meta property='article:modified_time' content='2025-07-30T11:17:43&#43;08:00'/>
+<meta name="twitter:title" content="34-最后一个能进入巴士的人">
+<meta name="twitter:description" content="sql基础50题-34题的题解和感悟">
     <link rel="shortcut icon" href="/favicon.svg" />
 
 <style>
@@ -250,24 +250,14 @@ article-page
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li><a href="#编码字符集和字符集编码">编码字符集和字符集编码</a></li>
-    <li><a href="#unicode-字符集">Unicode 字符集</a></li>
-    <li><a href="#基本字符与增补字符unicode的基础库与扩展包"><strong>基本字符与增补字符：Unicode的&quot;基础库&quot;与&quot;扩展包&quot;</strong></a>
+    <li><a href="#题目原文">题目原文</a></li>
+    <li><a href="#解答思路">解答思路</a>
       <ol>
-        <li><a href="#-基本字符basic-multilingual-plane-bmp"><strong>📚 基本字符（Basic Multilingual Plane, BMP）</strong></a></li>
-        <li><a href="#-增补字符supplementary-characters"><strong>🎁 增补字符（Supplementary Characters）</strong></a></li>
-        <li><a href="#-它们如何协作"><strong>🔧 它们如何协作？</strong></a></li>
-        <li><a href="#-为什么这样设计"><strong>💡 为什么这样设计？</strong></a></li>
-        <li><a href="#码点和代码单元">码点和代码单元</a></li>
-        <li><a href="#代理对">代理对</a></li>
-        <li><a href="#unicode平面planes补充说明">Unicode平面（Planes）补充说明</a>
-          <ol>
-            <li><a href="#平面划分详解">平面划分详解</a></li>
-            <li><a href="#重要辅助平面">重要辅助平面</a></li>
-          </ol>
-        </li>
+        <li><a href="#解法一">解法一</a></li>
+        <li><a href="#官方解法">官方解法</a></li>
       </ol>
     </li>
+    <li><a href="#参考">参考</a></li>
   </ol>
 </nav>
         </div>
@@ -286,8 +276,8 @@ article-page
     
     <header class="article-category">
         
-        <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%8E%9F%E7%90%86/" >
-            计算机基础知识原理
+        <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" >
+            数据库
         </a>
         
     </header>
@@ -295,12 +285,12 @@ article-page
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/post/2025/07/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E7%AE%80%E8%BF%B0/">字符编码简述</a>
+            <a href="/post/2025/07/sql%E5%9F%BA%E7%A1%80-34/">34-最后一个能进入巴士的人</a>
         </h2>
 
         
         <h3 class="article-subtitle">
-            对长久依赖困扰自己的字符集问题的一个解答
+            sql基础50题-34题的题解和感悟
         </h3>
         
     </div>
@@ -321,7 +311,7 @@ article-page
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-            <time class="article-time--published">2025-07-24 13:31:53  CST</time>
+            <time class="article-time--published">2025-07-30 11:17:43  CST</time>
         </div>
         
         
@@ -335,8 +325,8 @@ article-page
 
 
             <time class="article-time--reading">
-                阅读时长: 5 分钟，
-                字数: 2289个字
+                阅读时长: 3 分钟，
+                字数: 1148个字
 
             </time>
         </div>
@@ -352,196 +342,166 @@ article-page
     <section class="article-content">
     
     
-    <h1 id="编码字符集和字符集编码"><a href="#%e7%bc%96%e7%a0%81%e5%ad%97%e7%ac%a6%e9%9b%86%e5%92%8c%e5%ad%97%e7%ac%a6%e9%9b%86%e7%bc%96%e7%a0%81" class="header-anchor"></a>编码字符集和字符集编码
-</h1><p>给每一个字符分配一个固定的编号后，所有的字符就有了顺序，形成了<strong>编码字符集</strong>。比如“汉”可以分配一个固定编号为 <code>0X6C49</code>
-而<strong>字符集编码</strong>决定了如何将一个字符的整数编号对应到一个二进制的整数值。几乎绝大部分的编码方案就简单的将整数编号一比一还原到计算机存储中。但有的编码方案，例如适用于 Unicode 字符集的 UTF-8 编码形 式，就将很大一部分字符的整数编号作了变换后存储在计算机中。以“汉”字为例，“汉”的 Unicode 值为 <code>0x6C49</code> ，但其编码为 UTF-8 格式后的值为 <code>0xE6B189</code> 注意到变成了三个字节）</p>
-<h1 id="unicode-字符集"><a href="#unicode-%e5%ad%97%e7%ac%a6%e9%9b%86" class="header-anchor"></a>Unicode 字符集
-</h1><p>Unicode 字符集又称万国码，是一种<strong>编码字符集</strong>，设计之初的目的是用于表示世界上的所有字符。Unicode 采用 16 个二进制位来表示字符，因此能表示 <code>2^16 = 65536</code> 个字符。但 Unicode 字符集规定的编号并不是字符在计算机存储的二进制值。而是以 UTF-8、UTF-16 这样的<strong>字符集编码</strong>来决定的。</p>
-<h1 id="基本字符与增补字符unicode的基础库与扩展包"><a href="#%e5%9f%ba%e6%9c%ac%e5%ad%97%e7%ac%a6%e4%b8%8e%e5%a2%9e%e8%a1%a5%e5%ad%97%e7%ac%a6unicode%e7%9a%84%e5%9f%ba%e7%a1%80%e5%ba%93%e4%b8%8e%e6%89%a9%e5%b1%95%e5%8c%85" class="header-anchor"></a><strong>基本字符与增补字符：Unicode的&quot;基础库&quot;与&quot;扩展包&quot;</strong>
-</h1><p>Unicode 字符集就像一座巨大的图书馆，存放着全球所有的文字、符号和表情。为了方便管理和使用，它被划分为两大区域：<strong>基本字符（基础款）</strong> 和 <strong>增补字符（扩展包）</strong>。</p>
-<h2 id="-基本字符basic-multilingual-plane-bmp"><a href="#-%e5%9f%ba%e6%9c%ac%e5%ad%97%e7%ac%a6basic-multilingual-plane-bmp" class="header-anchor"></a><strong>📚 基本字符（Basic Multilingual Plane, BMP）</strong>
-</h2><ul>
-<li><strong>位置</strong>：Unicode 的第一个平面（U+0000 ~ U+FFFF）</li>
-<li><strong>特点</strong>：
-<ul>
-<li>包含了 <strong>99% 的日常使用字符</strong>，如：
-<ul>
-<li>英文（A-Z, a-z）</li>
-<li>常用汉字（中、文、字）</li>
-<li>数字（0-9）、标点符号（，。！？）</li>
-<li>常见符号（@、#、$、%）</li>
-</ul>
-</li>
-<li><strong>每个字符占用 2 字节（16 位）</strong>，计算机处理效率高</li>
-<li>兼容性最好，几乎所有软件和系统都支持</li>
-</ul>
-</li>
-</ul>
-<h2 id="-增补字符supplementary-characters"><a href="#-%e5%a2%9e%e8%a1%a5%e5%ad%97%e7%ac%a6supplementary-characters" class="header-anchor"></a><strong>🎁 增补字符（Supplementary Characters）</strong>
-</h2><ul>
-<li><strong>位置</strong>：Unicode 的辅助平面（U+10000 ~ U+10FFFF）</li>
-<li><strong>特点</strong>：
-<ul>
-<li>存放 <strong>超出基本平面容量的扩展内容</strong>，如：
-<ul>
-<li><strong>Emoji</strong> 😊🎉🐱‍👤</li>
-<li><strong>生僻汉字</strong> 𠀀（U+20000）、𪚥（U+2A6A5）</li>
-<li><strong>古代文字</strong> 𓀀（埃及象形文字）、𐎀（楔形文字）</li>
-<li><strong>特殊符号</strong> 𝄞（音乐符号）、𝔄（数学花体字母）</li>
-</ul>
-</li>
-<li><strong>每个字符占用 4 字节（UTF-8）或代理对（UTF-16）</strong></li>
-<li>需要现代软件和系统支持（部分老旧程序可能无法显示）</li>
-</ul>
-</li>
-</ul>
-<h2 id="-它们如何协作"><a href="#-%e5%ae%83%e4%bb%ac%e5%a6%82%e4%bd%95%e5%8d%8f%e4%bd%9c" class="header-anchor"></a><strong>🔧 它们如何协作？</strong>
-</h2><ul>
-<li><strong>基本字符</strong> 负责日常文字的显示，速度快、兼容性强。</li>
-<li><strong>增补字符</strong> 扩展了 Unicode 的表达能力，让计算机能支持更多文字、符号和表情。</li>
-<li>在编程时，处理增补字符（如 Emoji）可能需要特殊方式，比如：
-<ul>
-<li><strong>Java</strong> 中 <code>&quot;😊&quot;.length() === 2</code>（因为用代理对存储）</li>
-<li><strong>Python</strong> 中 <code>len(&quot;😊&quot;) == 1</code>（正确识别为一个字符）</li>
-</ul>
-</li>
-</ul>
-<h2 id="-为什么这样设计"><a href="#-%e4%b8%ba%e4%bb%80%e4%b9%88%e8%bf%99%e6%a0%b7%e8%ae%be%e8%ae%a1" class="header-anchor"></a><strong>💡 为什么这样设计？</strong>
-</h2><p>Unicode 最初设计时，<strong>基本字符（BMP）</strong> 已经能满足大多数需求。但随着计算机发展，人们需要更多符号（如 Emoji、古文字、专业符号），于是 <strong>增补字符</strong> 被引入，确保 Unicode 能不断扩展，而不破坏原有兼容性。</p>
-<p><strong>总结</strong>：</p>
-<ul>
-<li><strong>基本字符</strong> = 日常使用的标准字符（高效、兼容性强）</li>
-<li><strong>增补字符</strong> = 扩展的符号、表情、生僻字（功能丰富，但需要现代支持）</li>
-<li><strong>两者结合</strong>，才让计算机能显示全球所有的文字和符号！ 🌍✨</li>
-</ul>
-<h2 id="码点和代码单元"><a href="#%e7%a0%81%e7%82%b9%e5%92%8c%e4%bb%a3%e7%a0%81%e5%8d%95%e5%85%83" class="header-anchor"></a>码点和代码单元
-</h2><p><strong>码点（Code Point）</strong>：是Unicode字符集中每个字符的唯一编号，范围从U+0000到U+10FFFF。例如：</p>
-<ul>
-<li>&lsquo;A&rsquo; → U+0041</li>
-<li>&lsquo;中&rsquo; → U+4E2D</li>
-<li>&lsquo;😊&rsquo; → U+1F60A</li>
-</ul>
-<p><strong>代码单元（Code Unit）</strong>：是具体编码方案中表示码位的<strong>基本存储单位</strong>：</p>
-<ul>
-<li>UTF-8：使用1-4个8位代码单元</li>
-<li>UTF-16：使用1-2个16位代码单元</li>
-<li>UTF-32：固定使用1个32位代码单元</li>
-</ul>
-<p>在UTF-16编码中：</p>
-<ul>
-<li>基本字符（U+0000至U+FFFF）直接使用1个16位代码单元</li>
-<li>增补字符（U+10000及以上）使用2个16位代码单元（代理对）</li>
-</ul>
-<h2 id="代理对"><a href="#%e4%bb%a3%e7%90%86%e5%af%b9" class="header-anchor"></a>代理对
-</h2><p>UTF-16通过**代理对(Surrogate Pair)**机制，即两个代码单元表示增补字符，分为高代理与低代理：</p>
-<ul>
-<li>
-<p><strong>代理区划分</strong>：</p>
-<ul>
-<li>高代理区：U+D800～U+DBFF（1024个码位），代理对中的第一个</li>
-<li>低代理区：U+DC00～U+DFFF（1024个码位），代理对中的第二个</li>
-</ul>
-</li>
-<li>
-<p><strong>编码规则</strong>：</p>
-<ol>
-<li>将码点减去0x10000，得到20位中间值</li>
-<li>高10位 + 0xD800 → 高代理</li>
-<li>低10位 + 0xDC00 → 低代理</li>
-</ol>
-</li>
-<li>
-<p><strong>示例解析</strong>：
-以‘😊’（U+1F60A）为例：</p>
+    <p>题目链接：<a class="link" href="https://leetcode.cn/problems/last-person-to-fit-in-the-bus/description/"  target="_blank" rel="noopener"
+    >最后一个能进入巴士的人</a>
+Tags：高级查询和连接
+难度：中等</p>
+<h1 id="题目原文"><a href="#%e9%a2%98%e7%9b%ae%e5%8e%9f%e6%96%87" class="header-anchor"></a>题目原文
+</h1><p>表: <code>Queue</code></p>
+<pre tabindex="0"><code>+-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| person_id   | int     |
+| person_name | varchar |
+| weight      | int     |
+| turn        | int     |
++-------------+---------+
+person_id 是这个表具有唯一值的列。
+该表展示了所有候车乘客的信息。
+表中 person_id 和 turn 列将包含从 1 到 n 的所有数字，其中 n 是表中的行数。
+turn 决定了候车乘客上巴士的顺序，其中 turn=1 表示第一个上巴士，turn=n 表示最后一个上巴士。
+weight 表示候车乘客的体重，以千克为单位。
+</code></pre><p>有一队乘客在等着上巴士。然而，巴士有<code>1000</code> <strong>千克</strong> 的重量限制，所以其中一部分乘客可能无法上巴士。</p>
+<p>编写解决方案找出 <strong>最后一个</strong> 上巴士且不超过重量限制的乘客，并报告 <code>person_name</code> 。题目测试用例确保顺位第一的人可以上巴士且不会超重。</p>
+<p>返回结果格式如下所示。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：
+Queue 表
++-----------+-------------+--------+------+
+| person_id | person_name | weight | turn |
++-----------+-------------+--------+------+
+| 5         | Alice       | 250    | 1    |
+| 4         | Bob         | 175    | 5    |
+| 3         | Alex        | 350    | 2    |
+| 6         | John Cena   | 400    | 3    |
+| 1         | Winston     | 500    | 6    |
+| 2         | Marie       | 200    | 4    |
++-----------+-------------+--------+------+
+输出：
++-------------+
+| person_name |
++-------------+
+| John Cena   |
++-------------+
+解释：
+为了简化，Queue 表按 turn 列由小到大排序。
++------+----+-----------+--------+--------------+
+| Turn | ID | Name      | Weight | Total Weight |
++------+----+-----------+--------+--------------+
+| 1    | 5  | Alice     | 250    | 250          |
+| 2    | 3  | Alex      | 350    | 600          |
+| 3    | 6  | John Cena | 400    | 1000         | (最后一个上巴士)
+| 4    | 2  | Marie     | 200    | 1200         | (无法上巴士)
+| 5    | 4  | Bob       | 175    | ___          |
+| 6    | 1  | Winston   | 500    | ___          |
++------+----+-----------+--------+--------------+
+</code></pre><h1 id="解答思路"><a href="#%e8%a7%a3%e7%ad%94%e6%80%9d%e8%b7%af" class="header-anchor"></a>解答思路
+</h1><h2 id="解法一"><a href="#%e8%a7%a3%e6%b3%95%e4%b8%80" class="header-anchor"></a>解法一
+</h2><p>我的解法很直观，求出当前趟数上车后的总重量之后，与1000进行比较就能得出最后一趟能够上车的人了。我们先进行第一步，求出对应趟数的总重量：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-0-1"><a class="lnlinks" href="#hl-0-1">1</a>
-</span><span class="lnt" id="hl-0-2"><a class="lnlinks" href="#hl-0-2">2</a>
-</span><span class="lnt" id="hl-0-3"><a class="lnlinks" href="#hl-0-3">3</a>
-</span><span class="lnt" id="hl-0-4"><a class="lnlinks" href="#hl-0-4">4</a>
-</span><span class="lnt" id="hl-0-5"><a class="lnlinks" href="#hl-0-5">5</a>
-</span><span class="lnt" id="hl-0-6"><a class="lnlinks" href="#hl-0-6">6</a>
-</span><span class="lnt" id="hl-0-7"><a class="lnlinks" href="#hl-0-7">7</a>
-</span><span class="lnt" id="hl-0-8"><a class="lnlinks" href="#hl-0-8">8</a>
-</span><span class="lnt" id="hl-0-9"><a class="lnlinks" href="#hl-0-9">9</a>
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-2-1"><a class="lnlinks" href="#hl-2-1">1</a>
+</span><span class="lnt" id="hl-2-2"><a class="lnlinks" href="#hl-2-2">2</a>
+</span><span class="lnt" id="hl-2-3"><a class="lnlinks" href="#hl-2-3">3</a>
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">码点 U+1F60A
-</span></span><span class="line"><span class="cl">↓ 减去基准值
-</span></span><span class="line"><span class="cl">中间值 0x0F60A（0000 1111 0110 0000 1010）
-</span></span><span class="line"><span class="cl">↓ 拆分为高低10位
-</span></span><span class="line"><span class="cl">高10位：0000 1111 01 → 0x03D
-</span></span><span class="line"><span class="cl">低10位：10 0000 1010 → 0x20A
-</span></span><span class="line"><span class="cl">↓ 加上代理基值
-</span></span><span class="line"><span class="cl">高代理：0xD800 + 0x03D = 0xD83D
-</span></span><span class="line"><span class="cl">低代理：0xDC00 + 0x20A = 0xDE0A
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">person_name</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="n">turn</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">turn</span><span class="p">)</span><span class="w"> </span><span class="n">cur_weight</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="n">q</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">turn</span><span class="w"> </span><span class="k">ASC</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
-</div></li>
-<li>
-<p><strong>重要特性</strong>：</p>
-<ul>
-<li>代理区码位（U+D800～U+DFFF）不表示独立字符</li>
-<li>单独出现的高/低代理码元是无效的</li>
-</ul>
-</li>
-</ul>
-<h2 id="unicode平面planes补充说明"><a href="#unicode%e5%b9%b3%e9%9d%a2planes%e8%a1%a5%e5%85%85%e8%af%b4%e6%98%8e" class="header-anchor"></a>Unicode平面（Planes）补充说明
-</h2><p>Unicode字符空间被划分为17个平面（Planes），每个平面包含65,536（2^16）个码位。这种划分方式使得Unicode能够系统地组织超过百万个字符。</p>
-<h3 id="平面划分详解"><a href="#%e5%b9%b3%e9%9d%a2%e5%88%92%e5%88%86%e8%af%a6%e8%a7%a3" class="header-anchor"></a>平面划分详解
-</h3><ol>
-<li><strong>基本多文种平面（Plane 0，BMP）</strong>
-<ul>
-<li>范围：U+0000～U+FFFF</li>
-<li>特点：包含最常用的字符，如拉丁字母、汉字基础部分、标点符号等</li>
-<li>示例：&lsquo;A&rsquo;（U+0041）、&lsquo;中&rsquo;（U+4E2D）</li>
-</ul>
-</li>
-<li><strong>辅助平面（Plane 1-16）</strong>
-<ul>
-<li>范围：U+10000～U+10FFFF</li>
-<li>总容量：16×65,536=1,048,576个码位</li>
-<li>采用代理对机制编码</li>
-</ul>
-</li>
-</ol>
-<h3 id="重要辅助平面"><a href="#%e9%87%8d%e8%a6%81%e8%be%85%e5%8a%a9%e5%b9%b3%e9%9d%a2" class="header-anchor"></a>重要辅助平面
-</h3><div class="table-wrapper"><table>
-  <thead>
-      <tr>
-          <th style="text-align: left">平面编号</th>
-          <th style="text-align: left">名称</th>
-          <th style="text-align: left">范围</th>
-          <th style="text-align: left">主要内容</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: left">Plane 1</td>
-          <td style="text-align: left">补充多文种平面（SMP）</td>
-          <td style="text-align: left">U+10000～U+1FFFF</td>
-          <td style="text-align: left">历史文字、音乐符号、表情符号等</td>
-      </tr>
-      <tr>
-          <td style="text-align: left">Plane 2</td>
-          <td style="text-align: left">补充表意文字平面（SIP）</td>
-          <td style="text-align: left">U+20000～U+2FFFF</td>
-          <td style="text-align: left">罕见汉字扩展</td>
-      </tr>
-      <tr>
-          <td style="text-align: left">Plane 14</td>
-          <td style="text-align: left">特殊用途补充平面（SSP）</td>
-          <td style="text-align: left">U+E0000～U+EFFFF</td>
-          <td style="text-align: left">标签字符、变体选择符</td>
-      </tr>
-      <tr>
-          <td style="text-align: left">Plane 15-16</td>
-          <td style="text-align: left">私人使用区（PUA）</td>
-          <td style="text-align: left">U+F0000～U+10FFFF</td>
-          <td style="text-align: left">用户自定义字符</td>
-      </tr>
-  </tbody>
-</table></div>
+</div><p>在这里我是用了关联子查询，计算出当趟的总重量。</p>
+<p>之后将这个当作一个新表，将最后一个能上车的人过滤出来，代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-3-1"><a class="lnlinks" href="#hl-3-1">1</a>
+</span><span class="lnt" id="hl-3-2"><a class="lnlinks" href="#hl-3-2">2</a>
+</span><span class="lnt" id="hl-3-3"><a class="lnlinks" href="#hl-3-3">3</a>
+</span><span class="lnt" id="hl-3-4"><a class="lnlinks" href="#hl-3-4">4</a>
+</span><span class="lnt" id="hl-3-5"><a class="lnlinks" href="#hl-3-5">5</a>
+</span><span class="lnt" id="hl-3-6"><a class="lnlinks" href="#hl-3-6">6</a>
+</span><span class="lnt" id="hl-3-7"><a class="lnlinks" href="#hl-3-7">7</a>
+</span><span class="lnt" id="hl-3-8"><a class="lnlinks" href="#hl-3-8">8</a>
+</span><span class="lnt" id="hl-3-9"><a class="lnlinks" href="#hl-3-9">9</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">person_name</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="n">person_name</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="n">turn</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">turn</span><span class="p">)</span><span class="w"> </span><span class="n">cur_weight</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="n">q</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">turn</span><span class="w"> </span><span class="k">ASC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">t</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">cur_weight</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">1000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">cur_weight</span><span class="w"> </span><span class="k">DESC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>代码很直观，就是按照 <code>cur_weight</code> 排序将最后一位置于第一个，分页即可。但这里，我得批评自己，想了一会儿才想到 使用 <code>ORDER BY</code> 和 <code>LIMIT</code>，这些用的少的关键字还是得牢牢记在心里。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-important">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25
+    13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0
+    .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0
+    0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+        </svg>
+        <span>重要</span>
+    </p>
+    <p>使用关联子查询时，每当服务器扫描表中的一行时都会执行该子查询，由此可见，该解法其实其速度会巨慢无比，时间复杂度来到了O(n^2)</p>
+<p>但如果关联子查询能替换为自连接的话，时间复杂度同样为O(n^2)，但速度会快不少，因为服务器会对自连接有优化。</p>
+</blockquote>
+<h2 id="官方解法"><a href="#%e5%ae%98%e6%96%b9%e8%a7%a3%e6%b3%95" class="header-anchor"></a>官方解法
+</h2><p>官方解法就是用了自连接给出的答案，下面我们直接贴出来：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-4-1"><a class="lnlinks" href="#hl-4-1">1</a>
+</span><span class="lnt" id="hl-4-2"><a class="lnlinks" href="#hl-4-2">2</a>
+</span><span class="lnt" id="hl-4-3"><a class="lnlinks" href="#hl-4-3">3</a>
+</span><span class="lnt" id="hl-4-4"><a class="lnlinks" href="#hl-4-4">4</a>
+</span><span class="lnt" id="hl-4-5"><a class="lnlinks" href="#hl-4-5">5</a>
+</span><span class="lnt" id="hl-4-6"><a class="lnlinks" href="#hl-4-6">6</a>
+</span><span class="lnt" id="hl-4-7"><a class="lnlinks" href="#hl-4-7">7</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">person_name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="n">b</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">turn</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">turn</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">person_id</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">HAVING</span><span class="w"> </span><span class="k">SUM</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">weight</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">1000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">turn</span><span class="w"> </span><span class="k">DESC</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>官方解法将我的关联子查询替换为了自连接，除了这块其实两者没什么区别。我们将子表a理解为当趟，子表b理解为前趟，这里注意连接条件，将当趟比前趟趟数大的筛选出来，随后按趟数分组进行统计，最后排序取第一个即可。</p>
+
+
+
+
+<blockquote class="alert-blockquote alert-tip">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984
+    2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0
+    1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766
+    2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328
+    3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0
+    1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304
+    0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1
+    .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z" />
+        </svg>
+        <span>建议</span>
+    </p>
+    <p>这里在设计自连接的连接条件时，其实连接的表我们都可以如上述当趟和前趟的理解。比如职员表 <code>Employee</code> ，自连接时前者可以理解为员工，后者可以理解为上司。</p>
+</blockquote>
+<h1 id="参考"><a href="#%e5%8f%82%e8%80%83" class="header-anchor"></a>参考
+</h1><p><a class="link" href="https://leetcode.cn/problems/last-person-to-fit-in-the-bus/solutions/229666/zui-hou-yi-ge-neng-jin-ru-dian-ti-de-ren-by-leetco"  target="_blank" rel="noopener"
+    >官方解法</a></p>
 
 </section>
 
@@ -550,7 +510,7 @@ article-page
     
     <section class="article-tags">
         
-            <a href="/tags/%E5%9F%BA%E7%A1%80/">基础</a>
+            <a href="/tags/sql%E5%9F%BA%E7%A1%8050%E9%A2%98/">Sql基础50题</a>
         
     </section>
 
@@ -572,12 +532,38 @@ article-page
             
                 
 <article class="">
-    <a href="/post/2025/07/java%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%8E%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%AE%BE%E8%AE%A1/">
+    <a href="/post/2025/07/sql%E5%9F%BA%E7%A1%80-33/">
         
         
 
         <div class="article-details">
-            <h2 class="article-title">Java中的字符与字符串设计</h2>
+            <h2 class="article-title">33-指定日期的产品价格</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/post/2025/07/sql%E5%9F%BA%E7%A1%80-32/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">32-连续出现的数字</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/post/2025/07/sql%E5%9F%BA%E7%A1%80-31/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">31-员工的直属部门</h2>
         </div>
     </a>
 </article>
