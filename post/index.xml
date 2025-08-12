@@ -6,7 +6,189 @@
         <description>Recent content in Posts on riversea</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Wed, 30 Jul 2025 11:17:46 +0800</lastBuildDate><atom:link href="http://localhost:1313/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 05 Aug 2025 12:38:31 +0800</lastBuildDate><atom:link href="http://localhost:1313/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>50-查找拥有有效邮箱的用户</title>
+        <link>http://localhost:1313/post/2025/08/sql%E5%9F%BA%E7%A1%80-50/</link>
+        <pubDate>Tue, 05 Aug 2025 12:38:31 +0800</pubDate>
+        
+        <guid>http://localhost:1313/post/2025/08/sql%E5%9F%BA%E7%A1%80-50/</guid>
+        <description>&lt;p&gt;题目链接：&lt;a class=&#34;link&#34; href=&#34;https://leetcode.cn/problems/find-users-with-valid-e-mails/description/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;查找拥有有效邮箱的用户&lt;/a&gt;&lt;br&gt;
+Tags：高级字符串函数 / 正则表达式 / 子句&lt;br&gt;
+难度：简单&lt;/p&gt;
+&lt;h1 id=&#34;题目原文&#34;&gt;&lt;a href=&#34;#%e9%a2%98%e7%9b%ae%e5%8e%9f%e6%96%87&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;题目原文
+&lt;/h1&gt;&lt;p&gt;表: &lt;code&gt;Users&lt;/code&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;+---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| user_id       | int     |
+| name          | varchar |
+| mail          | varchar |
++---------------+---------+
+user_id 是该表的主键（具有唯一值的列）。
+该表包含了网站已注册用户的信息。有一些电子邮件是无效的。
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;编写一个解决方案，以查找具有有效电子邮件的用户。&lt;/p&gt;
+&lt;p&gt;一个有效的电子邮件具有前缀名称和域，其中：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;前缀&lt;/strong&gt; 名称是一个字符串，可以包含字母（大写或小写），数字，下划线 &lt;code&gt;&#39;_&#39;&lt;/code&gt; ，点 &lt;code&gt;&#39;.&#39;&lt;/code&gt; 和（或）破折号 &lt;code&gt;&#39;-&#39;&lt;/code&gt; 。前缀名称 &lt;strong&gt;必须&lt;/strong&gt; 以字母开头。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;域&lt;/strong&gt; 为 &lt;code&gt;&#39;@leetcode.com&#39;&lt;/code&gt; 。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以任何顺序返回结果表。&lt;/p&gt;
+&lt;p&gt;结果的格式如以下示例所示：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例 1：&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;输入：
+Users 表:
++---------+-----------+-------------------------+
+| user_id | name      | mail                    |
++---------+-----------+-------------------------+
+| 1       | Winston   | winston@leetcode.com    |
+| 2       | Jonathan  | jonathanisgreat         |
+| 3       | Annabelle | bella-@leetcode.com     |
+| 4       | Sally     | sally.come@leetcode.com |
+| 5       | Marwan    | quarz#2020@leetcode.com |
+| 6       | David     | david69@gmail.com       |
+| 7       | Shapiro   | .shapo@leetcode.com     |
++---------+-----------+-------------------------+
+输出：
++---------+-----------+-------------------------+
+| user_id | name      | mail                    |
++---------+-----------+-------------------------+
+| 1       | Winston   | winston@leetcode.com    |
+| 3       | Annabelle | bella-@leetcode.com     |
+| 4       | Sally     | sally.come@leetcode.com |
++---------+-----------+-------------------------+
+解释：
+用户 2 的电子邮件没有域。 
+用户 5 的电子邮件带有不允许的 &amp;#39;#&amp;#39; 符号。
+用户 6 的电子邮件没有 leetcode 域。 
+用户 7 的电子邮件以点开头。
+&lt;/code&gt;&lt;/pre&gt;&lt;h1 id=&#34;解答思路&#34;&gt;&lt;a href=&#34;#%e8%a7%a3%e7%ad%94%e6%80%9d%e8%b7%af&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;解答思路
+&lt;/h1&gt;&lt;p&gt;首先根据题目给出邮件正则表达式：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;前缀&lt;/strong&gt; 名称是一个字符串，可以包含字母（大写或小写），数字，下划线 &lt;code&gt;&#39;_&#39;&lt;/code&gt; ，点 &lt;code&gt;&#39;.&#39;&lt;/code&gt; 和（或）破折号 &lt;code&gt;&#39;-&#39;&lt;/code&gt; 。前缀名称 &lt;strong&gt;必须&lt;/strong&gt; 以字母开头。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;对应着 &lt;code&gt;^[a-zA-Z][\\w\\.-]*?&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;&lt;strong&gt;域&lt;/strong&gt; 为 &lt;code&gt;&#39;@leetcode.com&#39;&lt;/code&gt; 。
+&lt;ul&gt;
+&lt;li&gt;对应着 &lt;code&gt;@leetcode\\.com$&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;于是将两者拼接起来就是最终的语句：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-2-1&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-2-1&#34;&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-2-2&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-2-2&#34;&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-2-3&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-2-3&#34;&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;SELECT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;FROM&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;WHERE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mail&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RLIKE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;^[a-zA-Z][\\w\\.-]*?@leetcode\\.com$&amp;#39;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;非常好，所以我们一键提交。。。。。等待结果中，结果当然是。。。。诶，怎么出错了，定睛一看，代码在第26个测试集运行出错。该测试集只有一个：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;| user_id | name    | mail                 |
+| ------- | ------- | -------------------- |
+| 1       | Winston | winston@leetcode.COM |
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;我们可以看到，mail字段的顶级域名变为大写了，但是我们的正则表达式匹配的是小写啊，这是为什么。别急我们，首先来看看数据库使用的比较规则，你可以直接在力扣中使用：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-4-1&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-4-1&#34;&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;SHOW&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;VARIABLES&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;LIKE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;%collation%&amp;#39;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;没有意外的话，结果集应该如下：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;| Variable_name                 | Value              |
+| ----------------------------- | ------------------ |
+| collation_connection          | utf8mb4_general_ci |
+| collation_database            | utf8mb3_general_ci |
+| collation_server              | utf8mb4_0900_ai_ci |
+| default_collation_for_utf8mb4 | utf8mb4_0900_ai_ci |
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;对于字段 &lt;code&gt;collation_database&lt;/code&gt;，该字段代表着数据库的比较规则，其值为 &lt;code&gt;utf8mb3_general_ci&lt;/code&gt;，我们直接看最后面的后缀&lt;code&gt;ci&lt;/code&gt;，这代表着数据库字段本身的比较不区分大小写。因此我们可以预见性地肯定以下查询结果为 &lt;code&gt;true&lt;/code&gt; ：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-6-1&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-6-1&#34;&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;SELECT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;COM&amp;#39;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;com&amp;#39;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;-- 结果为true
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果要让数据库比较规则大小写敏感的话，应该使用 &lt;code&gt;bin&lt;/code&gt; 后缀。这里有两种解决办法。第一种修改比较的变量：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-7-1&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-7-1&#34;&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-7-2&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-7-2&#34;&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-7-3&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-7-3&#34;&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-7-4&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-7-4&#34;&gt;4&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;SET&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;SESSION&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;collation_database&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;utf8mb3_bin&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;SELECT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;FROM&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;WHERE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mail&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RLIKE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;^[a-zA-Z][\\w\\.-]*?@leetcode\\.com$&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;但力扣只支持一次查询，因此上面的方法不可用，那么第二种，我们可以在查询的时候设定比较的规则：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-8-1&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-8-1&#34;&gt;1&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-8-2&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-8-2&#34;&gt;2&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-8-3&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-8-3&#34;&gt;3&lt;/a&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;SELECT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;FROM&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Users&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;WHERE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mail&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;COLLATE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;utf8mb3_bin&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;RLIKE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;^[a-zA-Z][\\w\\.-]*?@leetcode\\.com$&amp;#39;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;我们将比较规则设定为 &lt;code&gt;utf8mb3_bin&lt;/code&gt;，服务器将会直接比较底层的二进制数据，大小写的二进制数据当然不一样，这样比较的时候就大小写敏感了。&lt;/p&gt;
+&lt;p&gt;这下一运行，直接通过！&lt;/p&gt;
+&lt;h1 id=&#34;参考&#34;&gt;&lt;a href=&#34;#%e5%8f%82%e8%80%83&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;参考
+&lt;/h1&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://leetcode.cn/problems/find-users-with-valid-e-mails/solutions/2366182/cha-zhao-yong-you-you-xiao-you-xiang-de-gn7ym&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;官方题解&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;linux和windows的大小写规范&#34;&gt;&lt;a href=&#34;#linux%e5%92%8cwindows%e7%9a%84%e5%a4%a7%e5%b0%8f%e5%86%99%e8%a7%84%e8%8c%83&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Linux和Windows的大小写规范
+&lt;/h1&gt;&lt;p&gt;对于关键字来说，两个操作系统的关键字都不区分大小写。但由于两个操作系统的文件系统不一样，对大小是否敏感也不一样，导致了在 &lt;code&gt;Linux&lt;/code&gt; 上编译的 &lt;code&gt;MySQL&lt;/code&gt;，其数据库名、表名本身大小写敏感，而在 &lt;code&gt;Windows&lt;/code&gt; 上编译的则大小写不敏感，因为总所周知，数据库反映在文件系统上就是一个目录，数据库名就是目录名，表则是一个文件，表名则是文件名。在 &lt;code&gt;Mysql&lt;/code&gt; 中使用 &lt;code&gt;lower_case_table_names&lt;/code&gt; 来控制表名的大小写是否敏感，其取值如下：&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;值&lt;/th&gt;
+          &lt;th&gt;含义&lt;/th&gt;
+          &lt;th&gt;适用场景&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;0&lt;/td&gt;
+          &lt;td&gt;区分大小写（Linux 默认）&lt;/td&gt;
+          &lt;td&gt;表名 &lt;code&gt;MyTable&lt;/code&gt;和 &lt;code&gt;mytable&lt;/code&gt;不同&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;1&lt;/td&gt;
+          &lt;td&gt;存储为小写，不区分大小写（Windows 默认）&lt;/td&gt;
+          &lt;td&gt;所有表名转为小写存储，查询时不区分大小写&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;2&lt;/td&gt;
+          &lt;td&gt;存储保留大小写，但查询不区分（混合模式 ）&lt;/td&gt;
+          &lt;td&gt;表名按创建时的格式存储，但查询时忽略大小写&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;code&gt;Linux&lt;/code&gt; 中默认为0，&lt;code&gt;Windows&lt;/code&gt; 默认为1&lt;/p&gt;
+&lt;p&gt;对于字段名来说，因为默认的匹配规则不区分大小写，因此在两个操作系统上列名默认来说大小写不敏感。因此，最好遵守以下规范：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;关键词全部大写&lt;/li&gt;
+&lt;li&gt;对于表名、数据库名以及字段名，全部人为区分大小写，但&lt;strong&gt;最好设计为小写&lt;/strong&gt;。例如表名为 &lt;code&gt;Users&lt;/code&gt;，查询时也应该使用 &lt;code&gt;Users&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>35-按分类统计薪水</title>
         <link>http://localhost:1313/post/2025/07/sql%E5%9F%BA%E7%A1%80-35/</link>
         <pubDate>Wed, 30 Jul 2025 11:17:46 +0800</pubDate>
@@ -176,7 +358,8 @@ Accounts 表:
     &lt;p&gt;在使用 &lt;code&gt;UNION&lt;/code&gt; 或者 &lt;code&gt;UNION ALL&lt;/code&gt; 拼接时，要注意下面的情况：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;字段的个数一定要相同&lt;/li&gt;
-&lt;li&gt;字段名可以不同，但类型必须相同&lt;/li&gt;
+&lt;li&gt;字段名可以不同，但类型必须相同，结果集以第一个查询的字段为结果集的字段&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ORDER BY&lt;/code&gt; 和 &lt;code&gt;LIMIT&lt;/code&gt; 只能放在最后一个查询的末尾进行全部结果集的结果控制。若要在每个查询中使用，则需将查询用括号括起来当作子查询。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/blockquote&gt;
 </description>
@@ -1135,6 +1318,7 @@ classDiagram
 &lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-3-20&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-3-20&#34;&gt;20&lt;/a&gt;
 &lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-3-21&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-3-21&#34;&gt;21&lt;/a&gt;
 &lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-3-22&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-3-22&#34;&gt;22&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-3-23&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-3-23&#34;&gt;23&lt;/a&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Employee&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
@@ -1151,7 +1335,8 @@ classDiagram
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;   &lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;double&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bonus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;   &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//省略构造方法&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;   &lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;double&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;getSalary&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(){&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//第一种：这种会从局部变量开始，从本类的成员变量开始，沿着继承链向上寻找，这种方式会受到局部变量的阴影&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//第一种：相当于第二种，这种方式会受到局部变量的阴影&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//对于没有同名局部变量的成员变量来说，这种方式为Java的语法糖，省略了前面的this，编译器将在前方自动加上this，即对象.成员变量的调用方式&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;salary&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bonus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//第二种：会直接从从本类的成员变量开始，沿着继承链向上寻找&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;salary&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bonus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; 
@@ -1176,7 +1361,7 @@ classDiagram
         &lt;span&gt;注意&lt;/span&gt;
     &lt;/p&gt;
     &lt;p&gt;&lt;code&gt;this&lt;/code&gt; 指向调用方法的隐参，相当于指向自身对象，其本身相当于是一个成员方法里的局部变量，由虚拟机自动赋值。值得注意的是，静态方法无法使用 &lt;code&gt;this&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;super&lt;/code&gt; 是一个关键字，没有指向任何对象，其作用只是指示虚拟机去父类中寻找成员变量&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;super&lt;/code&gt; 是一个关键字，没有指向任何对象，其作用只是指示编译器去父类中寻找成员变量&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;成员方法&#34;&gt;&lt;a href=&#34;#%e6%88%90%e5%91%98%e6%96%b9%e6%b3%95&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;成员方法
 &lt;/h2&gt;&lt;p&gt;我们把没有被final、static、private修饰的方法成为&lt;strong&gt;虚方法&lt;/strong&gt;。只有虚方法才能被继承。&lt;/p&gt;
@@ -1200,9 +1385,9 @@ classDiagram
 &lt;h3 id=&#34;理解方法调用&#34;&gt;&lt;a href=&#34;#%e7%90%86%e8%a7%a3%e6%96%b9%e6%b3%95%e8%b0%83%e7%94%a8&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;理解方法调用
 &lt;/h3&gt;&lt;p&gt;所有类的成员方法并不会存储到&lt;strong&gt;堆空间&lt;/strong&gt;中，而是存放在&lt;strong&gt;方法区&lt;/strong&gt;中，以字节码的形式存储。每个类的字节码文件会存放着该类的&lt;strong&gt;虚方法表&lt;/strong&gt;，该表记录着所有可以被继承的方法，即&lt;strong&gt;虚方法&lt;/strong&gt;。当使用一个类时，其字节码会被加载到方法区中，同时会沿着继承链把其父类的字节码文件加载进方法区中，这个过程会一直到最顶层的Object类，父类总是先于子类被放入方法区。当类被加载后，虚拟机会为该类计算出一份虚方法表，父类的虚方法表会移交给子类，子类会基于父类的虚方法表并添加上自己的虚方法生成一份自己的，并移交给自己的子类。这样，处于继承层次结构底层的类就会有一份包含父类的&lt;strong&gt;虚方法&lt;/strong&gt;以及自己的&lt;strong&gt;虚方法&lt;/strong&gt;的虚方法表。&lt;/p&gt;
 &lt;h4 id=&#34;动态绑定&#34;&gt;&lt;a href=&#34;#%e5%8a%a8%e6%80%81%e7%bb%91%e5%ae%9a&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;动态绑定
-&lt;/h4&gt;&lt;p&gt;当程序运行时才知道调用的具体方法。当一个类调用一个虚方法时，虚拟机就会去访问这个类型的方法表，例如&lt;a class=&#34;link&#34; href=&#34;#%e4%bb%80%e4%b9%88%e6%98%af%e7%bb%a7%e6%89%bf&#34; &gt;第一节&lt;/a&gt;中给的例子，第29行中调用的 &lt;code&gt;raiseSalary()&lt;/code&gt; 方法，虚拟机准确的找到了调用者的类型为Manager，于是去访问他的虚方法表，Manager类型继承了Employee类型的虚方法表，里面就有 &lt;code&gt;raiseSalary()&lt;/code&gt;  方法，因此可以访问。这个过程称为&lt;strong&gt;动态绑定&lt;/strong&gt;&lt;/p&gt;
+&lt;/h4&gt;&lt;p&gt;当程序运行时才知道调用的具体方法。当使用形如 &lt;code&gt;obj.xxx()&lt;/code&gt; 调用一个虚方法时，虚拟机就会去访问这个类型的方法表，例如&lt;a class=&#34;link&#34; href=&#34;#%e4%bb%80%e4%b9%88%e6%98%af%e7%bb%a7%e6%89%bf&#34; &gt;第一节&lt;/a&gt;中给的例子，第29行中调用的 &lt;code&gt;m.raiseSalary()&lt;/code&gt; 方法，虚拟机准确的找到了调用者的类型为Manager，于是去访问他的虚方法表，Manager类型继承了Employee类型的虚方法表，里面就有 &lt;code&gt;raiseSalary()&lt;/code&gt;  方法，因此可以访问。这个过程称为&lt;strong&gt;动态绑定&lt;/strong&gt;&lt;/p&gt;
 &lt;h4 id=&#34;静态绑定&#34;&gt;&lt;a href=&#34;#%e9%9d%99%e6%80%81%e7%bb%91%e5%ae%9a&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;静态绑定
-&lt;/h4&gt;&lt;p&gt;对于非虚方法以及构造方法，虚拟机准确的知道该调用哪些方法，会在编译时就准确的绑定了，不会在运行时绑定，这个过程成为&lt;strong&gt;静态绑定&lt;/strong&gt;。&lt;/p&gt;
+&lt;/h4&gt;&lt;p&gt;对于非虚方法以及构造方法，虚拟机准确的知道该调用具体的方法，会在编译时就准确的绑定了，不会在运行时绑定，这个过程成为&lt;strong&gt;静态绑定&lt;/strong&gt;。&lt;/p&gt;
 
 
 
@@ -1301,6 +1486,7 @@ classDiagram
 &lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-4-22&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-4-22&#34;&gt;22&lt;/a&gt;
 &lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-4-23&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-4-23&#34;&gt;23&lt;/a&gt;
 &lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-4-24&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-4-24&#34;&gt;24&lt;/a&gt;
+&lt;/span&gt;&lt;span class=&#34;lnt&#34; id=&#34;hl-4-25&#34;&gt;&lt;a class=&#34;lnlinks&#34; href=&#34;#hl-4-25&#34;&gt;25&lt;/a&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Employee&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
@@ -1322,6 +1508,7 @@ classDiagram
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//第一种：这种会去访问本类的方法表进行查找。但这种情况下是错误的，因为我们重写了getSalary()，其替换了方法表中的父类的成员方法吗，因此这种会无限的调用自生，直至栈溢出程序停止。&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getSalary&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bonus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//第二种：这种相当于this.getSlary()&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//同样也是一种语法糖，省略了前方的this，编译器将在前方自动加上this，即对象.成员方法的调用方式&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getSalary&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bonus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; 
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;       &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//第三种：使用super指示虚拟机从父类的方法表中进行寻找。&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;super&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getSalary&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bonus&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
@@ -1346,8 +1533,8 @@ classDiagram
     &lt;p&gt;还记得上面叙述的动态绑定和静态绑定吗，实际上只针对&lt;strong&gt;虚方法&lt;/strong&gt;，因为非虚方法，早已在编译阶段就已经确定了调用的方法。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h1 id=&#34;this-和-super-的功能汇总&#34;&gt;&lt;a href=&#34;#this-%e5%92%8c-super-%e7%9a%84%e5%8a%9f%e8%83%bd%e6%b1%87%e6%80%bb&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;this 和 super 的功能汇总
-&lt;/h1&gt;&lt;p&gt;&lt;code&gt;this&lt;/code&gt; ：真真切切的局部变量，指向调用者自身。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;super&lt;/code&gt; ：是一个关键字，指示虚拟机去访问父类的成员。&lt;/p&gt;
+&lt;/h1&gt;&lt;p&gt;&lt;code&gt;this&lt;/code&gt; ：真真切切的局部变量，指向调用者自身。即调用对象的引用&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;super&lt;/code&gt; ：是一个关键字，指示编译器去访问父类的成员。&lt;/p&gt;
 &lt;table&gt;
   &lt;thead&gt;
       &lt;tr&gt;
@@ -1372,6 +1559,23 @@ classDiagram
       &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
+
+
+
+
+&lt;blockquote class=&#34;alert-blockquote alert-important&#34;&gt;
+    &lt;p class=&#34;alert-heading&#34;&gt;
+        &lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 16 16&#34; width=&#34;16&#34; height=&#34;16&#34;&gt;
+            
+&lt;path d=&#34;M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25
+    13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0
+    .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0
+    0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z&#34; /&gt;
+        &lt;/svg&gt;
+        &lt;span&gt;重要&lt;/span&gt;
+    &lt;/p&gt;
+    &lt;p&gt;使用 &lt;code&gt;super&lt;/code&gt; 调用父类的成员方法，其绑定方式为静态绑定。&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h1 id=&#34;多态&#34;&gt;&lt;a href=&#34;#%e5%a4%9a%e6%80%81&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;多态
 &lt;/h1&gt;&lt;p&gt;多态即为多种状态，这是面向对象三种特征的其一。父类在运行时不仅能表现为当前类的状态，还能表示子类的状态，即子类的对象可以赋值给父类进行引用，我们仍然使用Employee类和Manager类举例：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -1447,7 +1651,8 @@ classDiagram
     &lt;p&gt;值得注意的是，&lt;code&gt;is a&lt;/code&gt; 原则描述的是一个替换原则，当两个类型满足 &lt;code&gt;is a&lt;/code&gt; 原则时就能使用多态。比如 &lt;code&gt;Manager[]&lt;/code&gt; 他是 &lt;code&gt;Employee[]&lt;/code&gt; ，因此 &lt;code&gt;Emplpoyee[] array = new Manager[]{}&lt;/code&gt; 是合法的&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;成员方法的访问&#34;&gt;&lt;a href=&#34;#%e6%88%90%e5%91%98%e6%96%b9%e6%b3%95%e7%9a%84%e8%ae%bf%e9%97%ae&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;成员方法的访问
-&lt;/h2&gt;&lt;p&gt;对于成员方法，编译期间会查看对象类型的成员方法是否存在或者能否访问；运行期间会查找实际类型的方法表，进而访问实际类型的具体方法。&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;对于虚方法，编译期间会查看对象类型的成员方法是否存在或者能否访问；运行期间会查找实际类型的方法表，进而访问实际类型的具体方法。
+对于非虚方法来说，其将会忽略多态，直接调用对象类型的方法。&lt;/p&gt;
 
 
 

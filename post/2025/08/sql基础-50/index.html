@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="sql基础50题-33题的题解和感悟">
-<title>33-指定日期的产品价格</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="sql基础50题-50题的题解和感悟">
+<title>50-查找拥有有效邮箱的用户</title>
 
-<link rel='canonical' href='http://localhost:1313/post/2025/07/sql%E5%9F%BA%E7%A1%80-33/'>
+<link rel='canonical' href='http://localhost:1313/post/2025/08/sql%E5%9F%BA%E7%A1%80-50/'>
 
-<link rel="stylesheet" href="/scss/style.min.b3f3640fcbf9ac1389e3acabb5489e99513d710d99b6620e51f7412f7ef85a81.css"><meta property='og:title' content="33-指定日期的产品价格">
-<meta property='og:description' content="sql基础50题-33题的题解和感悟">
-<meta property='og:url' content='http://localhost:1313/post/2025/07/sql%E5%9F%BA%E7%A1%80-33/'>
+<link rel="stylesheet" href="/scss/style.min.b3f3640fcbf9ac1389e3acabb5489e99513d710d99b6620e51f7412f7ef85a81.css"><meta property='og:title' content="50-查找拥有有效邮箱的用户">
+<meta property='og:description' content="sql基础50题-50题的题解和感悟">
+<meta property='og:url' content='http://localhost:1313/post/2025/08/sql%E5%9F%BA%E7%A1%80-50/'>
 <meta property='og:site_name' content='riversea'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='sql基础50题' /><meta property='article:published_time' content='2025-07-30T11:15:58&#43;08:00'/><meta property='article:modified_time' content='2025-07-30T11:15:58&#43;08:00'/>
-<meta name="twitter:title" content="33-指定日期的产品价格">
-<meta name="twitter:description" content="sql基础50题-33题的题解和感悟">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='sql基础50题' /><meta property='article:published_time' content='2025-08-05T12:38:31&#43;08:00'/><meta property='article:modified_time' content='2025-08-05T12:38:31&#43;08:00'/>
+<meta name="twitter:title" content="50-查找拥有有效邮箱的用户">
+<meta name="twitter:description" content="sql基础50题-50题的题解和感悟">
     <link rel="shortcut icon" href="/favicon.svg" />
 
 <style>
@@ -251,13 +251,9 @@ article-page
             <nav id="TableOfContents">
   <ol>
     <li><a href="#题目原文">题目原文</a></li>
-    <li><a href="#解答思路">解答思路</a>
-      <ol>
-        <li><a href="#解法一">解法一</a></li>
-        <li><a href="#官方解法">官方解法</a></li>
-      </ol>
-    </li>
+    <li><a href="#解答思路">解答思路</a></li>
     <li><a href="#参考">参考</a></li>
+    <li><a href="#linux和windows的大小写规范">Linux和Windows的大小写规范</a></li>
   </ol>
 </nav>
         </div>
@@ -285,12 +281,12 @@ article-page
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/post/2025/07/sql%E5%9F%BA%E7%A1%80-33/">33-指定日期的产品价格</a>
+            <a href="/post/2025/08/sql%E5%9F%BA%E7%A1%80-50/">50-查找拥有有效邮箱的用户</a>
         </h2>
 
         
         <h3 class="article-subtitle">
-            sql基础50题-33题的题解和感悟
+            sql基础50题-50题的题解和感悟
         </h3>
         
     </div>
@@ -311,7 +307,7 @@ article-page
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-            <time class="article-time--published">2025-07-30 11:15:58  CST</time>
+            <time class="article-time--published">2025-08-05 12:38:31  CST</time>
         </div>
         
         
@@ -325,8 +321,8 @@ article-page
 
 
             <time class="article-time--reading">
-                阅读时长: 2 分钟，
-                字数: 801个字
+                阅读时长: 4 分钟，
+                字数: 1549个字
 
             </time>
         </div>
@@ -342,54 +338,72 @@ article-page
     <section class="article-content">
     
     
-    <p>题目链接：<a class="link" href="https://leetcode.cn/problems/product-price-at-a-given-date/description/"  target="_blank" rel="noopener"
-    >指定日期的产品价格</a>
-Tags：高级查询和连接
-难度：中等</p>
+    <p>题目链接：<a class="link" href="https://leetcode.cn/problems/find-users-with-valid-e-mails/description/"  target="_blank" rel="noopener"
+    >查找拥有有效邮箱的用户</a><br>
+Tags：高级字符串函数 / 正则表达式 / 子句<br>
+难度：简单</p>
 <h1 id="题目原文"><a href="#%e9%a2%98%e7%9b%ae%e5%8e%9f%e6%96%87" class="header-anchor"></a>题目原文
-</h1><p>产品数据表: <code>Products</code></p>
+</h1><p>表: <code>Users</code></p>
 <pre tabindex="0"><code>+---------------+---------+
 | Column Name   | Type    |
 +---------------+---------+
-| product_id    | int     |
-| new_price     | int     |
-| change_date   | date    |
+| user_id       | int     |
+| name          | varchar |
+| mail          | varchar |
 +---------------+---------+
-(product_id, change_date) 是此表的主键（具有唯一值的列组合）。
-这张表的每一行分别记录了 某产品 在某个日期 更改后 的新价格。
-</code></pre><p>一开始，所有产品价格都为 10。</p>
-<p>编写一个解决方案，找出在 <code>2019-08-16</code> 所有产品的价格。</p>
-<p>以 <strong>任意顺序</strong> 返回结果表。</p>
-<p>结果格式如下例所示。</p>
-<p><strong>示例 1:</strong></p>
+user_id 是该表的主键（具有唯一值的列）。
+该表包含了网站已注册用户的信息。有一些电子邮件是无效的。
+</code></pre><p>编写一个解决方案，以查找具有有效电子邮件的用户。</p>
+<p>一个有效的电子邮件具有前缀名称和域，其中：</p>
+<ol>
+<li><strong>前缀</strong> 名称是一个字符串，可以包含字母（大写或小写），数字，下划线 <code>'_'</code> ，点 <code>'.'</code> 和（或）破折号 <code>'-'</code> 。前缀名称 <strong>必须</strong> 以字母开头。</li>
+<li><strong>域</strong> 为 <code>'@leetcode.com'</code> 。</li>
+</ol>
+<p>以任何顺序返回结果表。</p>
+<p>结果的格式如以下示例所示：</p>
+<p><strong>示例 1：</strong></p>
 <pre tabindex="0"><code>输入：
-Products 表:
-+------------+-----------+-------------+
-| product_id | new_price | change_date |
-+------------+-----------+-------------+
-| 1          | 20        | 2019-08-14  |
-| 2          | 50        | 2019-08-14  |
-| 1          | 30        | 2019-08-15  |
-| 1          | 35        | 2019-08-16  |
-| 2          | 65        | 2019-08-17  |
-| 3          | 20        | 2019-08-18  |
-+------------+-----------+-------------+
+Users 表:
++---------+-----------+-------------------------+
+| user_id | name      | mail                    |
++---------+-----------+-------------------------+
+| 1       | Winston   | winston@leetcode.com    |
+| 2       | Jonathan  | jonathanisgreat         |
+| 3       | Annabelle | bella-@leetcode.com     |
+| 4       | Sally     | sally.come@leetcode.com |
+| 5       | Marwan    | quarz#2020@leetcode.com |
+| 6       | David     | david69@gmail.com       |
+| 7       | Shapiro   | .shapo@leetcode.com     |
++---------+-----------+-------------------------+
 输出：
-+------------+-------+
-| product_id | price |
-+------------+-------+
-| 2          | 50    |
-| 1          | 35    |
-| 3          | 10    |
-+------------+-------+
++---------+-----------+-------------------------+
+| user_id | name      | mail                    |
++---------+-----------+-------------------------+
+| 1       | Winston   | winston@leetcode.com    |
+| 3       | Annabelle | bella-@leetcode.com     |
+| 4       | Sally     | sally.come@leetcode.com |
++---------+-----------+-------------------------+
+解释：
+用户 2 的电子邮件没有域。 
+用户 5 的电子邮件带有不允许的 &#39;#&#39; 符号。
+用户 6 的电子邮件没有 leetcode 域。 
+用户 7 的电子邮件以点开头。
 </code></pre><h1 id="解答思路"><a href="#%e8%a7%a3%e7%ad%94%e6%80%9d%e8%b7%af" class="header-anchor"></a>解答思路
-</h1><h2 id="解法一"><a href="#%e8%a7%a3%e6%b3%95%e4%b8%80" class="header-anchor"></a>解法一
-</h2><p>我的思路很简单，题目原文所描述的情况如下所示：</p>
+</h1><p>首先根据题目给出邮件正则表达式：</p>
+<ol>
+<li><strong>前缀</strong> 名称是一个字符串，可以包含字母（大写或小写），数字，下划线 <code>'_'</code> ，点 <code>'.'</code> 和（或）破折号 <code>'-'</code> 。前缀名称 <strong>必须</strong> 以字母开头。</li>
+</ol>
 <ul>
-<li>若商品未在 <code>2019-08-16</code> 之前就改价，则其价格未默认10块</li>
-<li>若改价，则以最靠近 <code>2019-08-16</code> 的价格未最终价格</li>
+<li>对应着 <code>^[a-zA-Z][\\w\\.-]*?</code></li>
 </ul>
-<p>因此，我们首先应该求得商品改价的最终日期，代码如下：</p>
+<ol start="2">
+<li><strong>域</strong> 为 <code>'@leetcode.com'</code> 。
+<ul>
+<li>对应着 <code>@leetcode\\.com$</code></li>
+</ul>
+</li>
+</ol>
+<p>于是将两者拼接起来就是最终的语句：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-2-1"><a class="lnlinks" href="#hl-2-1">1</a>
@@ -397,89 +411,107 @@ Products 表:
 </span><span class="lnt" id="hl-2-3"><a class="lnlinks" href="#hl-2-3">3</a>
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="k">IF</span><span class="p">(</span><span class="n">change_date</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="s1">&#39;2019-08-16&#39;</span><span class="p">,</span><span class="n">change_date</span><span class="p">,</span><span class="w"> </span><span class="k">NULL</span><span class="p">))</span><span class="w"> </span><span class="n">max_date</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Products</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">product_id</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Users</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">mail</span><span class="w"> </span><span class="n">RLIKE</span><span class="w"> </span><span class="s1">&#39;^[a-zA-Z][\\w\\.-]*?@leetcode\\.com$&#39;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>使用 <code>MAX()</code> 函数求得最靠近 <code>2019-08-16</code> 的日期，若雀氏没有，则该字段为 <code>NULL</code> 。随后，需与原表连接求得对应日期的价格，这就是最后的代码：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-3-1"><a class="lnlinks" href="#hl-3-1">1</a>
-</span><span class="lnt" id="hl-3-2"><a class="lnlinks" href="#hl-3-2">2</a>
-</span><span class="lnt" id="hl-3-3"><a class="lnlinks" href="#hl-3-3">3</a>
-</span><span class="lnt" id="hl-3-4"><a class="lnlinks" href="#hl-3-4">4</a>
-</span><span class="lnt" id="hl-3-5"><a class="lnlinks" href="#hl-3-5">5</a>
-</span><span class="lnt" id="hl-3-6"><a class="lnlinks" href="#hl-3-6">6</a>
-</span><span class="lnt" id="hl-3-7"><a class="lnlinks" href="#hl-3-7">7</a>
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="k">IF</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">max_date</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">new_price</span><span class="p">)</span><span class="w"> </span><span class="n">price</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Products</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="k">MAX</span><span class="p">(</span><span class="k">IF</span><span class="p">(</span><span class="n">change_date</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="s1">&#39;2019-08-16&#39;</span><span class="p">,</span><span class="n">change_date</span><span class="p">,</span><span class="w"> </span><span class="k">NULL</span><span class="p">))</span><span class="w"> </span><span class="n">max_date</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Products</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">product_id</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">t</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">ON</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">change_date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">max_date</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">max_date</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NULL</span><span class="p">)</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p>需要注意的是连接条件的设置，要求保证商品id相同，且变更日期与 <code>max_date</code> 一致，或者 <code>max_date</code> 为空。后面两个条件需要用括号括起来，因为 <code>AND</code> 的优先级要大于 <code>OR</code>，所以没有使用括号则连接条件会变成如下所示：</p>
+</div><p>非常好，所以我们一键提交。。。。。等待结果中，结果当然是。。。。诶，怎么出错了，定睛一看，代码在第26个测试集运行出错。该测试集只有一个：</p>
+<pre tabindex="0"><code>| user_id | name    | mail                 |
+| ------- | ------- | -------------------- |
+| 1       | Winston | winston@leetcode.COM |
+</code></pre><p>我们可以看到，mail字段的顶级域名变为大写了，但是我们的正则表达式匹配的是小写啊，这是为什么。别急我们，首先来看看数据库使用的比较规则，你可以直接在力扣中使用：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-4-1"><a class="lnlinks" href="#hl-4-1">1</a>
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">(p.product_id = t.product_id AND p.change_date = t.max_date) OR t.max_date IS NULL
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>最后的结果会整整多出来<code>n - 1</code>行，<code>n</code> 是 <code>Products</code> 表的行数。</p>
-<p><code>DISTINCT</code> 会保证最后的结果唯一，因为 <code>max_date</code> 为空的商品可能会在 <code>2019-08-16</code>  之后改变多次。</p>
-<h2 id="官方解法"><a href="#%e5%ae%98%e6%96%b9%e8%a7%a3%e6%b3%95" class="header-anchor"></a>官方解法
-</h2><p>我们直接贴出代码：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-5-1"><a class="lnlinks" href="#hl-5-1"> 1</a>
-</span><span class="lnt" id="hl-5-2"><a class="lnlinks" href="#hl-5-2"> 2</a>
-</span><span class="lnt" id="hl-5-3"><a class="lnlinks" href="#hl-5-3"> 3</a>
-</span><span class="lnt" id="hl-5-4"><a class="lnlinks" href="#hl-5-4"> 4</a>
-</span><span class="lnt" id="hl-5-5"><a class="lnlinks" href="#hl-5-5"> 5</a>
-</span><span class="lnt" id="hl-5-6"><a class="lnlinks" href="#hl-5-6"> 6</a>
-</span><span class="lnt" id="hl-5-7"><a class="lnlinks" href="#hl-5-7"> 7</a>
-</span><span class="lnt" id="hl-5-8"><a class="lnlinks" href="#hl-5-8"> 8</a>
-</span><span class="lnt" id="hl-5-9"><a class="lnlinks" href="#hl-5-9"> 9</a>
-</span><span class="lnt" id="hl-5-10"><a class="lnlinks" href="#hl-5-10">10</a>
-</span><span class="lnt" id="hl-5-11"><a class="lnlinks" href="#hl-5-11">11</a>
-</span><span class="lnt" id="hl-5-12"><a class="lnlinks" href="#hl-5-12">12</a>
-</span><span class="lnt" id="hl-5-13"><a class="lnlinks" href="#hl-5-13">13</a>
-</span><span class="lnt" id="hl-5-14"><a class="lnlinks" href="#hl-5-14">14</a>
-</span><span class="lnt" id="hl-5-15"><a class="lnlinks" href="#hl-5-15">15</a>
-</span><span class="lnt" id="hl-5-16"><a class="lnlinks" href="#hl-5-16">16</a>
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="n">ifnull</span><span class="p">(</span><span class="n">p2</span><span class="p">.</span><span class="n">new_price</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">price</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">from</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">select</span><span class="w"> </span><span class="k">distinct</span><span class="w"> </span><span class="n">product_id</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">from</span><span class="w"> </span><span class="n">products</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="c1">-- 所有的产品
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">select</span><span class="w"> </span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="n">new_price</span><span class="w"> 
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">from</span><span class="w"> </span><span class="n">products</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">where</span><span class="w"> </span><span class="p">(</span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="n">change_date</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">select</span><span class="w"> </span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="k">max</span><span class="p">(</span><span class="n">change_date</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">from</span><span class="w"> </span><span class="n">products</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">where</span><span class="w"> </span><span class="n">change_date</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="s1">&#39;2019-08-16&#39;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">group</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">product_id</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="c1">-- 在 2019-08-16 之前有过修改的产品和最新的价格
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">on</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">product_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="n">product_id</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;%collation%&#39;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>官方的解法和我的解法差不太多，在这里贴出来，提醒一下自己一个很少用的语法，对于多字段的子查询过滤条件可以使用如上的语法。</p>
+</div><p>没有意外的话，结果集应该如下：</p>
+<pre tabindex="0"><code>| Variable_name                 | Value              |
+| ----------------------------- | ------------------ |
+| collation_connection          | utf8mb4_general_ci |
+| collation_database            | utf8mb3_general_ci |
+| collation_server              | utf8mb4_0900_ai_ci |
+| default_collation_for_utf8mb4 | utf8mb4_0900_ai_ci |
+</code></pre><p>对于字段 <code>collation_database</code>，该字段代表着数据库的比较规则，其值为 <code>utf8mb3_general_ci</code>，我们直接看最后面的后缀<code>ci</code>，这代表着数据库字段本身的比较不区分大小写。因此我们可以预见性地肯定以下查询结果为 <code>true</code> ：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-6-1"><a class="lnlinks" href="#hl-6-1">1</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="s1">&#39;COM&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;com&#39;</span><span class="w"> </span><span class="c1">-- 结果为true
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果要让数据库比较规则大小写敏感的话，应该使用 <code>bin</code> 后缀。这里有两种解决办法。第一种修改比较的变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-7-1"><a class="lnlinks" href="#hl-7-1">1</a>
+</span><span class="lnt" id="hl-7-2"><a class="lnlinks" href="#hl-7-2">2</a>
+</span><span class="lnt" id="hl-7-3"><a class="lnlinks" href="#hl-7-3">3</a>
+</span><span class="lnt" id="hl-7-4"><a class="lnlinks" href="#hl-7-4">4</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SET</span><span class="w"> </span><span class="k">SESSION</span><span class="w"> </span><span class="n">collation_database</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;utf8mb3_bin&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Users</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">mail</span><span class="w"> </span><span class="n">RLIKE</span><span class="w"> </span><span class="s1">&#39;^[a-zA-Z][\\w\\.-]*?@leetcode\\.com$&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>但力扣只支持一次查询，因此上面的方法不可用，那么第二种，我们可以在查询的时候设定比较的规则：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt" id="hl-8-1"><a class="lnlinks" href="#hl-8-1">1</a>
+</span><span class="lnt" id="hl-8-2"><a class="lnlinks" href="#hl-8-2">2</a>
+</span><span class="lnt" id="hl-8-3"><a class="lnlinks" href="#hl-8-3">3</a>
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">Users</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">mail</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb3_bin</span><span class="w"> </span><span class="n">RLIKE</span><span class="w"> </span><span class="s1">&#39;^[a-zA-Z][\\w\\.-]*?@leetcode\\.com$&#39;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们将比较规则设定为 <code>utf8mb3_bin</code>，服务器将会直接比较底层的二进制数据，大小写的二进制数据当然不一样，这样比较的时候就大小写敏感了。</p>
+<p>这下一运行，直接通过！</p>
 <h1 id="参考"><a href="#%e5%8f%82%e8%80%83" class="header-anchor"></a>参考
-</h1><p><a class="link" href="https://leetcode.cn/problems/product-price-at-a-given-date/solutions/3738723/ying-gai-shi-chang-gui-de-jie-fa-by-rive-g2u4"  target="_blank" rel="noopener"
-    >解法一</a></p>
-<p><a class="link" href="https://leetcode.cn/problems/product-price-at-a-given-date/solutions/178481/zhi-ding-ri-qi-de-chan-pin-jie-ge-by-leetcode-solu"  target="_blank" rel="noopener"
-    >官方解法</a></p>
+</h1><p><a class="link" href="https://leetcode.cn/problems/find-users-with-valid-e-mails/solutions/2366182/cha-zhao-yong-you-you-xiao-you-xiang-de-gn7ym"  target="_blank" rel="noopener"
+    >官方题解</a></p>
+<h1 id="linux和windows的大小写规范"><a href="#linux%e5%92%8cwindows%e7%9a%84%e5%a4%a7%e5%b0%8f%e5%86%99%e8%a7%84%e8%8c%83" class="header-anchor"></a>Linux和Windows的大小写规范
+</h1><p>对于关键字来说，两个操作系统的关键字都不区分大小写。但由于两个操作系统的文件系统不一样，对大小是否敏感也不一样，导致了在 <code>Linux</code> 上编译的 <code>MySQL</code>，其数据库名、表名本身大小写敏感，而在 <code>Windows</code> 上编译的则大小写不敏感，因为总所周知，数据库反映在文件系统上就是一个目录，数据库名就是目录名，表则是一个文件，表名则是文件名。在 <code>Mysql</code> 中使用 <code>lower_case_table_names</code> 来控制表名的大小写是否敏感，其取值如下：</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>值</th>
+          <th>含义</th>
+          <th>适用场景</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>区分大小写（Linux 默认）</td>
+          <td>表名 <code>MyTable</code>和 <code>mytable</code>不同</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>存储为小写，不区分大小写（Windows 默认）</td>
+          <td>所有表名转为小写存储，查询时不区分大小写</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>存储保留大小写，但查询不区分（混合模式 ）</td>
+          <td>表名按创建时的格式存储，但查询时忽略大小写</td>
+      </tr>
+  </tbody>
+</table></div>
+<p><code>Linux</code> 中默认为0，<code>Windows</code> 默认为1</p>
+<p>对于字段名来说，因为默认的匹配规则不区分大小写，因此在两个操作系统上列名默认来说大小写不敏感。因此，最好遵守以下规范：</p>
+<ul>
+<li>关键词全部大写</li>
+<li>对于表名、数据库名以及字段名，全部人为区分大小写，但<strong>最好设计为小写</strong>。例如表名为 <code>Users</code>，查询时也应该使用 <code>Users</code></li>
+</ul>
 
 </section>
 
@@ -507,6 +539,45 @@ Products 表:
     <h2 class="section-title">相关文章</h2>
     <div class="related-content">
         <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/post/2025/07/sql%E5%9F%BA%E7%A1%80-35/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">35-按分类统计薪水</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/post/2025/07/sql%E5%9F%BA%E7%A1%80-34/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">34-最后一个能进入巴士的人</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/post/2025/07/sql%E5%9F%BA%E7%A1%80-33/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">33-指定日期的产品价格</h2>
+        </div>
+    </a>
+</article>
+
             
                 
 <article class="">

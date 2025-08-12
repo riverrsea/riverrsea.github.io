@@ -361,7 +361,7 @@ article-page
 
             <time class="article-time--reading">
                 阅读时长: 13 分钟，
-                字数: 6192个字
+                字数: 6360个字
 
             </time>
         </div>
@@ -698,6 +698,7 @@ classDiagram
 </span><span class="lnt" id="hl-3-20"><a class="lnlinks" href="#hl-3-20">20</a>
 </span><span class="lnt" id="hl-3-21"><a class="lnlinks" href="#hl-3-21">21</a>
 </span><span class="lnt" id="hl-3-22"><a class="lnlinks" href="#hl-3-22">22</a>
+</span><span class="lnt" id="hl-3-23"><a class="lnlinks" href="#hl-3-23">23</a>
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Employee</span><span class="w">
@@ -714,7 +715,8 @@ classDiagram
 </span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">private</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="c1">//省略构造方法</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="kd">public</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">getSalary</span><span class="p">(){</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第一种：这种会从局部变量开始，从本类的成员变量开始，沿着继承链向上寻找，这种方式会受到局部变量的阴影</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第一种：相当于第二种，这种方式会受到局部变量的阴影</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//对于没有同名局部变量的成员变量来说，这种方式为Java的语法糖，省略了前面的this，编译器将在前方自动加上this，即对象.成员变量的调用方式</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第二种：会直接从从本类的成员变量开始，沿着继承链向上寻找</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">salary</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w"> 
@@ -739,7 +741,7 @@ classDiagram
         <span>注意</span>
     </p>
     <p><code>this</code> 指向调用方法的隐参，相当于指向自身对象，其本身相当于是一个成员方法里的局部变量，由虚拟机自动赋值。值得注意的是，静态方法无法使用 <code>this</code></p>
-<p><code>super</code> 是一个关键字，没有指向任何对象，其作用只是指示虚拟机去父类中寻找成员变量</p>
+<p><code>super</code> 是一个关键字，没有指向任何对象，其作用只是指示编译器去父类中寻找成员变量</p>
 </blockquote>
 <h2 id="成员方法"><a href="#%e6%88%90%e5%91%98%e6%96%b9%e6%b3%95" class="header-anchor"></a>成员方法
 </h2><p>我们把没有被final、static、private修饰的方法成为<strong>虚方法</strong>。只有虚方法才能被继承。</p>
@@ -763,9 +765,9 @@ classDiagram
 <h3 id="理解方法调用"><a href="#%e7%90%86%e8%a7%a3%e6%96%b9%e6%b3%95%e8%b0%83%e7%94%a8" class="header-anchor"></a>理解方法调用
 </h3><p>所有类的成员方法并不会存储到<strong>堆空间</strong>中，而是存放在<strong>方法区</strong>中，以字节码的形式存储。每个类的字节码文件会存放着该类的<strong>虚方法表</strong>，该表记录着所有可以被继承的方法，即<strong>虚方法</strong>。当使用一个类时，其字节码会被加载到方法区中，同时会沿着继承链把其父类的字节码文件加载进方法区中，这个过程会一直到最顶层的Object类，父类总是先于子类被放入方法区。当类被加载后，虚拟机会为该类计算出一份虚方法表，父类的虚方法表会移交给子类，子类会基于父类的虚方法表并添加上自己的虚方法生成一份自己的，并移交给自己的子类。这样，处于继承层次结构底层的类就会有一份包含父类的<strong>虚方法</strong>以及自己的<strong>虚方法</strong>的虚方法表。</p>
 <h4 id="动态绑定"><a href="#%e5%8a%a8%e6%80%81%e7%bb%91%e5%ae%9a" class="header-anchor"></a>动态绑定
-</h4><p>当程序运行时才知道调用的具体方法。当一个类调用一个虚方法时，虚拟机就会去访问这个类型的方法表，例如<a class="link" href="#%e4%bb%80%e4%b9%88%e6%98%af%e7%bb%a7%e6%89%bf" >第一节</a>中给的例子，第29行中调用的 <code>raiseSalary()</code> 方法，虚拟机准确的找到了调用者的类型为Manager，于是去访问他的虚方法表，Manager类型继承了Employee类型的虚方法表，里面就有 <code>raiseSalary()</code>  方法，因此可以访问。这个过程称为<strong>动态绑定</strong></p>
+</h4><p>当程序运行时才知道调用的具体方法。当使用形如 <code>obj.xxx()</code> 调用一个虚方法时，虚拟机就会去访问这个类型的方法表，例如<a class="link" href="#%e4%bb%80%e4%b9%88%e6%98%af%e7%bb%a7%e6%89%bf" >第一节</a>中给的例子，第29行中调用的 <code>m.raiseSalary()</code> 方法，虚拟机准确的找到了调用者的类型为Manager，于是去访问他的虚方法表，Manager类型继承了Employee类型的虚方法表，里面就有 <code>raiseSalary()</code>  方法，因此可以访问。这个过程称为<strong>动态绑定</strong></p>
 <h4 id="静态绑定"><a href="#%e9%9d%99%e6%80%81%e7%bb%91%e5%ae%9a" class="header-anchor"></a>静态绑定
-</h4><p>对于非虚方法以及构造方法，虚拟机准确的知道该调用哪些方法，会在编译时就准确的绑定了，不会在运行时绑定，这个过程成为<strong>静态绑定</strong>。</p>
+</h4><p>对于非虚方法以及构造方法，虚拟机准确的知道该调用具体的方法，会在编译时就准确的绑定了，不会在运行时绑定，这个过程成为<strong>静态绑定</strong>。</p>
 
 
 
@@ -864,6 +866,7 @@ classDiagram
 </span><span class="lnt" id="hl-4-22"><a class="lnlinks" href="#hl-4-22">22</a>
 </span><span class="lnt" id="hl-4-23"><a class="lnlinks" href="#hl-4-23">23</a>
 </span><span class="lnt" id="hl-4-24"><a class="lnlinks" href="#hl-4-24">24</a>
+</span><span class="lnt" id="hl-4-25"><a class="lnlinks" href="#hl-4-25">25</a>
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Employee</span><span class="w">
@@ -885,6 +888,7 @@ classDiagram
 </span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第一种：这种会去访问本类的方法表进行查找。但这种情况下是错误的，因为我们重写了getSalary()，其替换了方法表中的父类的成员方法吗，因此这种会无限的调用自生，直至栈溢出程序停止。</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getSalary</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c1">//第二种：这种相当于this.getSlary()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c1">//同样也是一种语法糖，省略了前方的this，编译器将在前方自动加上this，即对象.成员方法的调用方式</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">getSalary</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w"> 
 </span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="c1">//第三种：使用super指示虚拟机从父类的方法表中进行寻找。</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="kd">super</span><span class="p">.</span><span class="na">getSalary</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bonus</span><span class="p">;</span><span class="w">
@@ -909,8 +913,8 @@ classDiagram
     <p>还记得上面叙述的动态绑定和静态绑定吗，实际上只针对<strong>虚方法</strong>，因为非虚方法，早已在编译阶段就已经确定了调用的方法。</p>
 </blockquote>
 <h1 id="this-和-super-的功能汇总"><a href="#this-%e5%92%8c-super-%e7%9a%84%e5%8a%9f%e8%83%bd%e6%b1%87%e6%80%bb" class="header-anchor"></a>this 和 super 的功能汇总
-</h1><p><code>this</code> ：真真切切的局部变量，指向调用者自身。</p>
-<p><code>super</code> ：是一个关键字，指示虚拟机去访问父类的成员。</p>
+</h1><p><code>this</code> ：真真切切的局部变量，指向调用者自身。即调用对象的引用</p>
+<p><code>super</code> ：是一个关键字，指示编译器去访问父类的成员。</p>
 <div class="table-wrapper"><table>
   <thead>
       <tr>
@@ -935,6 +939,23 @@ classDiagram
       </tr>
   </tbody>
 </table></div>
+
+
+
+
+<blockquote class="alert-blockquote alert-important">
+    <p class="alert-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            
+<path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25
+    13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0
+    .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0
+    0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+        </svg>
+        <span>重要</span>
+    </p>
+    <p>使用 <code>super</code> 调用父类的成员方法，其绑定方式为静态绑定。</p>
+</blockquote>
 <h1 id="多态"><a href="#%e5%a4%9a%e6%80%81" class="header-anchor"></a>多态
 </h1><p>多态即为多种状态，这是面向对象三种特征的其一。父类在运行时不仅能表现为当前类的状态，还能表示子类的状态，即子类的对象可以赋值给父类进行引用，我们仍然使用Employee类和Manager类举例：</p>
 <div class="highlight"><div class="chroma">
@@ -1010,7 +1031,8 @@ classDiagram
     <p>值得注意的是，<code>is a</code> 原则描述的是一个替换原则，当两个类型满足 <code>is a</code> 原则时就能使用多态。比如 <code>Manager[]</code> 他是 <code>Employee[]</code> ，因此 <code>Emplpoyee[] array = new Manager[]{}</code> 是合法的</p>
 </blockquote>
 <h2 id="成员方法的访问"><a href="#%e6%88%90%e5%91%98%e6%96%b9%e6%b3%95%e7%9a%84%e8%ae%bf%e9%97%ae" class="header-anchor"></a>成员方法的访问
-</h2><p>对于成员方法，编译期间会查看对象类型的成员方法是否存在或者能否访问；运行期间会查找实际类型的方法表，进而访问实际类型的具体方法。</p>
+</h2><p>对于虚方法，编译期间会查看对象类型的成员方法是否存在或者能否访问；运行期间会查找实际类型的方法表，进而访问实际类型的具体方法。
+对于非虚方法来说，其将会忽略多态，直接调用对象类型的方法。</p>
 
 
 
@@ -1179,13 +1201,13 @@ classDiagram
 <section id="uptime-counter" data-start="1753315200">
     <div class="uptime-container">
         <span id="uptime-text">✨ 小破站已运行 </span>
-        <span id="uptime-days">8</span>
+        <span id="uptime-days">19</span>
         <span class="uptime-unit">天</span>
-        <span id="uptime-hours">11</span>
+        <span id="uptime-hours">09</span>
         <span class="time-separator">:</span>
-        <span id="uptime-mins">21</span>
+        <span id="uptime-mins">17</span>
         <span class="time-separator">:</span>
-        <span id="uptime-secs">02</span>
+        <span id="uptime-secs">30</span>
         <span class="emoji-pair">🚀</span>
     </div>
 </section>

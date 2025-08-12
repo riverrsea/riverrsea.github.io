@@ -320,7 +320,7 @@ article-page
 
             <time class="article-time--reading">
                 阅读时长: 2 分钟，
-                字数: 867个字
+                字数: 945个字
 
             </time>
         </div>
@@ -500,7 +500,8 @@ Accounts 表:
     <p>在使用 <code>UNION</code> 或者 <code>UNION ALL</code> 拼接时，要注意下面的情况：</p>
 <ul>
 <li>字段的个数一定要相同</li>
-<li>字段名可以不同，但类型必须相同</li>
+<li>字段名可以不同，但类型必须相同，结果集以第一个查询的字段为结果集的字段</li>
+<li><code>ORDER BY</code> 和 <code>LIMIT</code> 只能放在最后一个查询的末尾进行全部结果集的结果控制。若要在每个查询中使用，则需将查询用括号括起来当作子查询。</li>
 </ul>
 </blockquote>
 
@@ -612,13 +613,13 @@ Accounts 表:
 <section id="uptime-counter" data-start="1753315200">
     <div class="uptime-container">
         <span id="uptime-text">✨ 小破站已运行 </span>
-        <span id="uptime-days">8</span>
+        <span id="uptime-days">19</span>
         <span class="uptime-unit">天</span>
-        <span id="uptime-hours">11</span>
+        <span id="uptime-hours">09</span>
         <span class="time-separator">:</span>
-        <span id="uptime-mins">21</span>
+        <span id="uptime-mins">17</span>
         <span class="time-separator">:</span>
-        <span id="uptime-secs">02</span>
+        <span id="uptime-secs">30</span>
         <span class="emoji-pair">🚀</span>
     </div>
 </section>
